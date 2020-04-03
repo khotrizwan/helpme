@@ -11,29 +11,31 @@ import org.springframework.stereotype.Service;
 
 import com.helpme.model.LoginBean;
 import com.helpme.model.NeedBean;
+import com.helpme.model.NeedListResponse;
 import com.helpme.model.UserBean;
 import com.helpme.repository.LoginRepository;
 import com.helpme.repository.NeedRepository;
 import com.helpme.repository.UserRepository;
+import com.helpme.util.HelpMeContants;
 
 @Service
 public class UserServiceImp implements UserService{
 
 	@Autowired
 	LoginRepository login;
-	
+
 	@Autowired
 	UserRepository user;
-	
+
 	@Autowired
 	NeedRepository need;
-	
+
 	@Override
 	public boolean login(LoginBean loginBean) {
 		Optional<LoginBean> bdDetails = login.findById(loginBean.getMobileno());
 		if(bdDetails.isPresent() && bdDetails.get().getOtp().equals(loginBean.getOtp())) 
 			return true;
-		
+
 		return false;
 	}
 
@@ -68,12 +70,35 @@ public class UserServiceImp implements UserService{
 			List<NeedBean> typeNeeds = new ArrayList<NeedBean>();
 			String key = needBean.getStatus();
 			if(map.containsKey(key)) {
-				typeNeeds = map.get(needBean.getType());
+				typeNeeds = map.get(key);
 			}
 			typeNeeds.add(needBean);
 			map.put(key, typeNeeds);
 		}
 		return map;
+	}
+
+	private NeedListResponse getNeedsList(List<NeedBean> needs) {
+		List<NeedBean> pending = new ArrayList<NeedBean>();
+		List<NeedBean> accepted = new ArrayList<NeedBean>();
+		List<NeedBean> complete = new ArrayList<NeedBean>();
+
+		for (NeedBean needBean : needs) {
+			String key = needBean.getStatus();
+			if(key.equalsIgnoreCase(HelpMeContants.STATUS_PENDING)) {
+				pending.add(needBean);
+			} else if(key.equalsIgnoreCase(HelpMeContants.STATUS_ACCEPTED)) {
+				accepted.add(needBean);
+			} else if(key.equalsIgnoreCase(HelpMeContants.STATUS_COMPLETE)) {
+				complete.add(needBean);
+			}
+		}
+		
+		NeedListResponse needListResponse = new NeedListResponse();
+		needListResponse.setAccepted(accepted);
+		needListResponse.setComplete(complete);
+		needListResponse.setPending(pending);
+		return needListResponse;
 	}
 
 	@Override
@@ -82,8 +107,8 @@ public class UserServiceImp implements UserService{
 	}
 
 	@Override
-	public Map<String, List<NeedBean>> userNeedsStatus(String mobileno) {
-		return getNeedsMap(need.findByMobileno(mobileno));
+	public NeedListResponse userNeedsStatus(String mobileno) {
+		return getNeedsList(need.findByMobileno(mobileno));
 	}
 
 }

@@ -11,7 +11,7 @@ public class NeedBean {
 	@GeneratedValue
 	private int id;
 	private String mobileno;
-	private String type;
+	private String needType;
 	private String description;
 	private String Status;
 	
@@ -20,17 +20,17 @@ public class NeedBean {
 	}
 
 	
-	public NeedBean(int id, String mobileno, String type, String description, String status) {
+	public NeedBean(int id, String mobileno, String needType, String description, String status) {
 		this.id = id;
 		this.mobileno = mobileno;
-		this.type = type;
+		this.needType = needType;
 		this.description = description;
 		Status = status;
 	}
 	
-	public NeedBean(String mobileno, String type, String description, String status) {
+	public NeedBean(String mobileno, String needType, String description, String status) {
 		this.mobileno = mobileno;
-		this.type = type;
+		this.needType = needType;
 		this.description = description;
 		Status = status;
 	}
@@ -52,12 +52,12 @@ public class NeedBean {
 		this.mobileno = mobileno;
 	}
 
-	public String getType() {
-		return type;
+	public String getNeedType() {
+		return needType;
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	public void setNeedType(String needType) {
+		this.needType = needType;
 	}
 
 	public String getDescription() {
@@ -78,7 +78,7 @@ public class NeedBean {
 
 	@Override
 	public String toString() {
-		return "NeedBean [id=" + id + ", mobileno=" + mobileno + ", type=" + type + ", description=" + description
+		return "NeedBean [id=" + id + ", mobileno=" + mobileno + ", needType=" + needType + ", description=" + description
 				+ ", Status=" + Status + "]";
 	}
 	

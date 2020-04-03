@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.helpme.model.LoginBean;
 import com.helpme.model.NeedBean;
+import com.helpme.model.NeedListResponse;
 import com.helpme.model.UserBean;
 
 public interface UserService {
@@ -17,5 +18,5 @@ public interface UserService {
 	public List<NeedBean> userNeeds();
 	public List<NeedBean> userNeeds(String mobileno);
 	public Map<String, List<NeedBean>> userNeedsStatus();
-	public Map<String, List<NeedBean>> userNeedsStatus(String mobileno);
+	public NeedListResponse userNeedsStatus(String mobileno);
 }
