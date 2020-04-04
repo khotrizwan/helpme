@@ -19,6 +19,7 @@ import com.helpme.model.OrgBean;
 import com.helpme.model.UserBean;
 import com.helpme.repository.LoginRepository;
 import com.helpme.repository.HelpRepository;
+import com.helpme.repository.OrgRepository;
 import com.helpme.repository.UserRepository;
 import com.helpme.util.HelpMeUtil;
 
@@ -30,6 +31,9 @@ public class UserServiceImp implements UserService{
 
 	@Autowired
 	UserRepository user;
+	
+	@Autowired
+	OrgRepository org;
 
 	@Autowired
 	HelpRepository help;
@@ -153,7 +157,7 @@ public class UserServiceImp implements UserService{
 
 	@Override
 	public List<HelpBean> userNeeds(String mobileno) {
-		return help.findByMobileno(mobileno);
+		return null;//help.findByMobileno(mobileno);
 	}
 
 	@Override
@@ -178,5 +182,7 @@ public class UserServiceImp implements UserService{
 		HelpMeUtil.sendOTP(loginBean, env.getProperty(HelpMeContants.COMPANY_NAME), env.getProperty(HelpMeContants.PARAM3), env.getProperty(HelpMeContants.AUTHKEY), env.getProperty(HelpMeContants.SMS_URL), env.getProperty(HelpMeContants.TEMPLATE_ID));
 		return loginBean;
 	}
+
+	
 
 }
