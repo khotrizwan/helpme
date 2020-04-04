@@ -5,6 +5,10 @@ public class HelpMeContants {
 	
 	public static final String Y = "Y";
 	public static final String USER_TYPE_HELPFINDER = "HelpFinder";
+	public static final String USER_TYPE_SERVICE_PROVIDER = "ServiceProvider";
+	public static final String ORG_TYPE_SERVICE_PROVIDER = "ServiceProvider";
+	public static final String N = "N";
+	public static final String USER_TYPE_VOLUNTEER = "Volunteer";
 	public static String TEMPLATE_ID = "sms.template.id";
 	public static String UTF8 = "UTF-8";
 	public static String SMS_URL = "sms.url";
@@ -24,9 +28,14 @@ public class HelpMeContants {
 	public static String ERR_SERVER_ISSUE = "ERR0400";
 	public static String MSG_SERVER_ISSUE = "Something went wrong";
 	
-	public static String STATUS_PENDING = "pending";
-	public static String STATUS_ACCEPTED = "accepted";
-	public static String STATUS_COMPLETE = "complete";
+	public static String STATUS_OPEN = "OPEN";
+	public static String STATUS_ACCEPTED = "ACCEPTED";
+	public static String STATUS_REJECTED = "REJECTED";
+	public static String STATUS_RESOLVED = "RESOLVED";
+	public static String STATUS_UN_RESOLVED = "UN_RESOLVED";
+	public static String STATUS_CLOSED = "CLOSED";
+	
+	;
 	public static String senderID = "viraltechnologies_1585934565ZK68";
 
 }

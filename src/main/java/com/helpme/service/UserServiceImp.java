@@ -1,6 +1,5 @@
 package com.helpme.service;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -12,14 +11,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.helpme.config.HelpMeContants;
 import com.helpme.model.LoginBean;
-import com.helpme.model.NeedBean;
-import com.helpme.model.NeedListResponse;
+import com.helpme.model.HelpBean;
+import com.helpme.model.HelpListResponse;
+import com.helpme.model.OrgBean;
 import com.helpme.model.UserBean;
 import com.helpme.repository.LoginRepository;
-import com.helpme.repository.NeedRepository;
+import com.helpme.repository.HelpRepository;
 import com.helpme.repository.UserRepository;
 import com.helpme.util.HelpMeUtil;
 
@@ -33,8 +32,8 @@ public class UserServiceImp implements UserService{
 	UserRepository user;
 
 	@Autowired
-	NeedRepository need;
-	
+	HelpRepository help;
+
 	@Autowired
 	private Environment env;
 
@@ -56,6 +55,31 @@ public class UserServiceImp implements UserService{
 		userBean.setCreateDate(new Date());
 		return user.save(userBean);
 	}
+	
+	@Override
+	public OrgBean saveServiceProvider(OrgBean orgBean) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	private OrgBean saveOrganization(OrgBean orgBean) {	
+		orgBean.setOrgType(HelpMeContants.ORG_TYPE_SERVICE_PROVIDER);; //service_provider / Volunteer / HelpmePlease / HelpFinder
+		orgBean.setIsIndividual(HelpMeContants.N);
+		orgBean.setCanAccept(HelpMeContants.N);
+		orgBean.setIsActive(HelpMeContants.Y);
+		orgBean.setCreateDate(new Date());
+		return org.save(orgBean);
+	}
+	
+	private UserBean saveServiceProviderUser(UserBean userBean) {	
+		userBean.setIsAdmin(HelpMeContants.Y);
+		userBean.setUserType(HelpMeContants.USER_TYPE_SERVICE_PROVIDER); //help_finder / service provider / volunteer / HelpMePlease 
+		userBean.setOrganizationId(1);
+		userBean.setIsActive(HelpMeContants.Y);
+		userBean.setCreateDate(new Date());
+		return user.save(userBean);
+	}
+	
 
 	@Override
 	public List<UserBean> userList() {
@@ -63,25 +87,26 @@ public class UserServiceImp implements UserService{
 	}
 
 	@Override
-	public NeedBean saveNeed(NeedBean needBean) {
-		return need.save(needBean);
+	public HelpBean createHelp(HelpBean helpBean) {
+		helpBean.setHelpItemStatus(HelpMeContants.STATUS_OPEN);
+		return help.save(helpBean);
 	}
 
 	@Override
-	public List<NeedBean> userNeeds() {
-		return (List<NeedBean>) need.findAll();
+	public List<HelpBean> userNeeds() {
+		return (List<HelpBean>) help.findAll();
 	}
 
 	@Override
-	public Map<String, List<NeedBean>> userNeedsStatus() {
-		return getNeedsMap( (List<NeedBean>) need.findAll());
+	public Map<String, List<HelpBean>> userNeedsStatus() {
+		return getNeedsMap( (List<HelpBean>) help.findAll());
 	}
 
-	private Map<String, List<NeedBean>> getNeedsMap(List<NeedBean> needs) {
-		Map<String, List<NeedBean>> map = new HashMap<String, List<NeedBean>>();
-		for (NeedBean needBean : needs) {
-			List<NeedBean> typeNeeds = new ArrayList<NeedBean>();
-			String key = needBean.getStatus();
+	private Map<String, List<HelpBean>> getNeedsMap(List<HelpBean> needs) {
+		Map<String, List<HelpBean>> map = new HashMap<String, List<HelpBean>>();
+		for (HelpBean needBean : needs) {
+			List<HelpBean> typeNeeds = new ArrayList<HelpBean>();
+			String key = needBean.getHelpItemStatus();
 			if(map.containsKey(key)) {
 				typeNeeds = map.get(key);
 			}
@@ -91,37 +116,59 @@ public class UserServiceImp implements UserService{
 		return map;
 	}
 
-	private NeedListResponse getNeedsList(List<NeedBean> needs) {
-		List<NeedBean> pending = new ArrayList<NeedBean>();
-		List<NeedBean> accepted = new ArrayList<NeedBean>();
-		List<NeedBean> complete = new ArrayList<NeedBean>();
+	private HelpListResponse getNeedsList(List<HelpBean> helps) {
+		List<HelpBean> pending = new ArrayList<HelpBean>();
+		List<HelpBean> accepted = new ArrayList<HelpBean>();
+		List<HelpBean> close = new ArrayList<HelpBean>();
+		List<HelpBean> rejected = new ArrayList<HelpBean>();
+		List<HelpBean> resolved = new ArrayList<HelpBean>();
+		List<HelpBean> unresolved = new ArrayList<HelpBean>();
 
-		for (NeedBean needBean : needs) {
-			String key = needBean.getStatus();
-			if(key.equalsIgnoreCase(HelpMeContants.STATUS_PENDING)) {
-				pending.add(needBean);
+		for (HelpBean helpBean : helps) {
+			String key = helpBean.getHelpItemStatus();
+			if(key.equalsIgnoreCase(HelpMeContants.STATUS_OPEN)) {
+				pending.add(helpBean);
 			} else if(key.equalsIgnoreCase(HelpMeContants.STATUS_ACCEPTED)) {
-				accepted.add(needBean);
-			} else if(key.equalsIgnoreCase(HelpMeContants.STATUS_COMPLETE)) {
-				complete.add(needBean);
+				accepted.add(helpBean);
+			} else if(key.equalsIgnoreCase(HelpMeContants.STATUS_CLOSED)) {
+				close.add(helpBean);
+			} else if(key.equalsIgnoreCase(HelpMeContants.STATUS_REJECTED)) {
+				rejected.add(helpBean);
+			} else if(key.equalsIgnoreCase(HelpMeContants.STATUS_RESOLVED)) {
+				resolved.add(helpBean);
+			} else if(key.equalsIgnoreCase(HelpMeContants.STATUS_UN_RESOLVED)) {
+				unresolved.add(helpBean);
 			}
 		}
-		
-		NeedListResponse needListResponse = new NeedListResponse();
-		needListResponse.setAccepted(accepted);
-		needListResponse.setComplete(complete);
-		needListResponse.setPending(pending);
-		return needListResponse;
+
+		HelpListResponse helpListResponse = new HelpListResponse();
+		helpListResponse.setAccepted(accepted);
+		helpListResponse.setClose(close);
+		helpListResponse.setPending(pending);
+		helpListResponse.setRejected(rejected);
+		helpListResponse.setResolved(resolved);
+		helpListResponse.setUnresolved(unresolved);
+		return helpListResponse;
 	}
 
 	@Override
-	public List<NeedBean> userNeeds(String mobileno) {
-		return need.findByMobileno(mobileno);
+	public List<HelpBean> userNeeds(String mobileno) {
+		return help.findByMobileno(mobileno);
 	}
 
 	@Override
-	public NeedListResponse userNeedsStatus(String mobileno) {
-		return getNeedsList(need.findByMobileno(mobileno));
+	public HelpListResponse userHelpList(int userId) {
+		Optional<UserBean> userBean = user.findById(userId);
+		if(userBean.isPresent()) { 
+			if(userBean.get().getUserType().equals(HelpMeContants.USER_TYPE_HELPFINDER)) {
+				return getNeedsList(help.findByUserId(userId));
+			} else if(userBean.get().getUserType().equals(HelpMeContants.USER_TYPE_SERVICE_PROVIDER)) { 
+				return getNeedsList(help.findByAssignedUserId(userId));
+			} else if(userBean.get().getUserType().equals(HelpMeContants.USER_TYPE_VOLUNTEER)) {
+				return getNeedsList(help.findByVolunteerUserId(userId));
+			}
+		}
+		return null;
 	}
 
 	@Override

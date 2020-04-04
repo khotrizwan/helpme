@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.helpme.config.HelpMeContants;
 import com.helpme.model.LoginBean;
-import com.helpme.model.NeedBean;
-import com.helpme.model.NeedListResponse;
+import com.helpme.model.HelpBean;
+import com.helpme.model.HelpListResponse;
 import com.helpme.model.ResponseBean;
 import com.helpme.model.UserBean;
 import com.helpme.service.UserService;
@@ -84,24 +84,23 @@ public class HelpMeController {
 	
 	*/
 	
-	@PostMapping("need")
+	@PostMapping("createHelp")
 	@ResponseBody
-	public ResponseBean addNeed(@RequestBody NeedBean needBean, HttpServletRequest request) {
-		logger.debug("User Detailes: " + needBean.toString());
-		needBean.setStatus(HelpMeContants.STATUS_PENDING);
-		needBean = userService.saveNeed(needBean);
-		logger.debug("User Detailes Saved: " + needBean.toString());
+	public ResponseBean createHelp(@RequestBody HelpBean helpBean, HttpServletRequest request) {
+		logger.debug("User Detailes: " + helpBean.toString());
+		helpBean = userService.createHelp(helpBean);
+		logger.debug("User Detailes Saved: " + helpBean.toString());
 		return new ResponseBean(HelpMeContants.ERR_SUCCESS, HelpMeContants.MSG_SUCCESS);
 	}
 	
-	@PostMapping("listneed")
+	@PostMapping("listhelp")
 	@ResponseBody
-	public ResponseBean getNeedList(@RequestBody LoginBean loginBean, HttpServletRequest request) {
-		logger.debug("list Need: " + loginBean.toString());
-		NeedListResponse needListResponse = userService.userNeedsStatus(loginBean.getMobileno());
-		needListResponse.setErrCode(HelpMeContants.ERR_SUCCESS);
-		needListResponse.setErrMsg(HelpMeContants.MSG_SUCCESS);
-		logger.debug("list Need response: " + needListResponse.toString());
-		return needListResponse;
+	public ResponseBean getHelpList(@RequestBody UserBean userBean, HttpServletRequest request) {
+		logger.debug("list Need: " + userBean.toString());
+		HelpListResponse helpListResponse = userService.userHelpList(userBean.getId());
+		helpListResponse.setErrCode(HelpMeContants.ERR_SUCCESS);
+		helpListResponse.setErrMsg(HelpMeContants.MSG_SUCCESS);
+		logger.debug("list Need response: " + helpListResponse.toString());
+		return helpListResponse;
 	}
 }
