@@ -14,7 +14,7 @@ import com.helpme.model.UserBean;
 
 public interface UserService {
 	public boolean login(LoginBean loginBean);
-	public UserBean saveUser(UserBean userBean);
+	public UserBean saveHelpFinder(UserBean userBean);
 	public List<UserBean> userList();
 	public NeedBean saveNeed(NeedBean needBean);
 	public List<NeedBean> userNeeds();

@@ -1,5 +1,7 @@
 package com.helpme.model;
 
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -8,38 +10,35 @@ import javax.persistence.Id;
 public class UserBean {
 
 	@Id
+	@GeneratedValue
+	private int id;
 	private String mobileno;
-	private String fullname;
+	private String firstName;
+	private String middleName;
+	private String lastName;
+	private String emailAddress;
+	private String latitude;
+	private String longitude;
 	private String address;
-	private String state;
-	private String city;
-	private boolean cough;
-	private boolean fever;
-	private boolean breath;
-	private String otherMedicalCondition;
-	private int age;
-	private String travel;
+	private int cityId;
+	private String isAdmin;
+	private String userType; //help_finder / service provider / volunteer / HelpMePlease 
+	private int organizationId;
+	private String isActive;
+	private Date createDate;
 	
 	public UserBean() {
 		// TODO Auto-generated constructor stub
 	}
-
-	public UserBean(String mobileno, String fullname, String address, String state, String city, boolean cough, boolean fever,
-			boolean breath, String otherMedicalCondition, int age, String travel) {
-		this.mobileno = mobileno;
-		this.fullname = fullname;
-		this.address = address;
-		this.state = state;
-		this.city = city;
-		this.cough = cough;
-		this.fever = fever;
-		this.breath = breath;
-		this.otherMedicalCondition = otherMedicalCondition;
-		this.age = age;
-		this.travel = travel;
+	
+	public int getId() {
+		return id;
 	}
 
-	
+	public void setId(int id) {
+		this.id = id;
+	}
+
 	public String getMobileno() {
 		return mobileno;
 	}
@@ -48,12 +47,52 @@ public class UserBean {
 		this.mobileno = mobileno;
 	}
 
-	public String getFullname() {
-		return fullname;
+	public String getFirstName() {
+		return firstName;
 	}
 
-	public void setFullname(String fullname) {
-		this.fullname = fullname;
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getMiddleName() {
+		return middleName;
+	}
+
+	public void setMiddleName(String middleName) {
+		this.middleName = middleName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public String getEmailAddress() {
+		return emailAddress;
+	}
+
+	public void setEmailAddress(String emailAddress) {
+		this.emailAddress = emailAddress;
+	}
+
+	public String getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(String latitude) {
+		this.latitude = latitude;
+	}
+
+	public String getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(String longitude) {
+		this.longitude = longitude;
 	}
 
 	public String getAddress() {
@@ -64,79 +103,61 @@ public class UserBean {
 		this.address = address;
 	}
 
-	public String getState() {
-		return state;
+	public int getCityId() {
+		return cityId;
 	}
 
-	public void setState(String state) {
-		this.state = state;
+	public void setCityId(int cityId) {
+		this.cityId = cityId;
 	}
 
-	public String getCity() {
-		return city;
+	public String getIsAdmin() {
+		return isAdmin;
 	}
 
-	public void setCity(String city) {
-		this.city = city;
+	public void setIsAdmin(String isAdmin) {
+		this.isAdmin = isAdmin;
 	}
 
-	public boolean isCough() {
-		return cough;
+	public String getUserType() {
+		return userType;
 	}
 
-	public void setCough(boolean cough) {
-		this.cough = cough;
+	public void setUserType(String userType) {
+		this.userType = userType;
 	}
 
-	public boolean isFever() {
-		return fever;
+	public int getOrganizationId() {
+		return organizationId;
 	}
 
-	public void setFever(boolean fever) {
-		this.fever = fever;
+	public void setOrganizationId(int organizationId) {
+		this.organizationId = organizationId;
 	}
 
-	public boolean isBreath() {
-		return breath;
+	public String getIsActive() {
+		return isActive;
 	}
 
-	public void setBreath(boolean breath) {
-		this.breath = breath;
+	public void setIsActive(String isActive) {
+		this.isActive = isActive;
 	}
 
-	public String getOtherMedicalCondition() {
-		return otherMedicalCondition;
+	public Date getCreateDate() {
+		return createDate;
 	}
 
-	public void setOtherMedicalCondition(String otherMedicalCondition) {
-		this.otherMedicalCondition = otherMedicalCondition;
-	}
-
-	public int getAge() {
-		return age;
-	}
-
-	public void setAge(int age) {
-		this.age = age;
-	}
-
-	public String isTravel() {
-		return travel;
-	}
-
-	public void setTravel(String travel) {
-		this.travel = travel;
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
 	}
 
 	@Override
 	public String toString() {
-		return "UserBean [mobileno=" + mobileno + ", fullname=" + fullname + ", address=" + address + ", state=" + state + ", city="
-				+ city + ", cough=" + cough + ", fever=" + fever + ", breath=" + breath + ", otherMedicalCondition="
-				+ otherMedicalCondition + ", age=" + age + ", travel=" + travel + "]";
+		return "UserBean [mobileno=" + mobileno + ", firstName=" + firstName + ", middleName=" + middleName
+				+ ", lastName=" + lastName + ", emailAddress=" + emailAddress + ", latitude=" + latitude
+				+ ", longitude=" + longitude + ", address=" + address + ", cityId=" + cityId + ", isAdmin=" + isAdmin
+				+ ", userType=" + userType + ", organizationId=" + organizationId + ", isActive=" + isActive
+				+ ", createDate=" + createDate + "]";
 	}
-
-	
-	
-	
 	
 }
