@@ -8,7 +8,10 @@ public class HelpMeContants {
 	public static final String USER_TYPE_SERVICE_PROVIDER = "ServiceProvider";
 	public static final String ORG_TYPE_SERVICE_PROVIDER = "ServiceProvider";
 	public static final String N = "N";
+<<<<<<< HEAD
 	public static final String USER_TYPE_VOLUNTEER = "Volunteer";
+=======
+>>>>>>> branch 'master' of https://github.com/khotrizwan/helpme
 	public static String TEMPLATE_ID = "sms.template.id";
 	public static String UTF8 = "UTF-8";
 	public static String SMS_URL = "sms.url";

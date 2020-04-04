@@ -13,12 +13,22 @@ import org.springframework.stereotype.Service;
 
 import com.helpme.config.HelpMeContants;
 import com.helpme.model.LoginBean;
+<<<<<<< HEAD
 import com.helpme.model.HelpBean;
 import com.helpme.model.HelpListResponse;
+=======
+import com.helpme.model.NeedBean;
+import com.helpme.model.NeedListResponse;
+>>>>>>> branch 'master' of https://github.com/khotrizwan/helpme
 import com.helpme.model.OrgBean;
 import com.helpme.model.UserBean;
 import com.helpme.repository.LoginRepository;
+<<<<<<< HEAD
 import com.helpme.repository.HelpRepository;
+=======
+import com.helpme.repository.NeedRepository;
+import com.helpme.repository.OrgRepository;
+>>>>>>> branch 'master' of https://github.com/khotrizwan/helpme
 import com.helpme.repository.UserRepository;
 import com.helpme.util.HelpMeUtil;
 
@@ -30,6 +40,9 @@ public class UserServiceImp implements UserService{
 
 	@Autowired
 	UserRepository user;
+	
+	@Autowired
+	OrgRepository org;
 
 	@Autowired
 	HelpRepository help;
@@ -178,5 +191,7 @@ public class UserServiceImp implements UserService{
 		HelpMeUtil.sendOTP(loginBean, env.getProperty(HelpMeContants.COMPANY_NAME), env.getProperty(HelpMeContants.PARAM3), env.getProperty(HelpMeContants.AUTHKEY), env.getProperty(HelpMeContants.SMS_URL), env.getProperty(HelpMeContants.TEMPLATE_ID));
 		return loginBean;
 	}
+
+	
 
 }
