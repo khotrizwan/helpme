@@ -1,10 +1,12 @@
 package com.helpme.service;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.helpme.model.LoginBean;
 import com.helpme.model.NeedBean;
 import com.helpme.model.NeedListResponse;
@@ -19,4 +21,5 @@ public interface UserService {
 	public List<NeedBean> userNeeds(String mobileno);
 	public Map<String, List<NeedBean>> userNeedsStatus();
 	public NeedListResponse userNeedsStatus(String mobileno);
+	public LoginBean generateAndSaveOTP(LoginBean loginBean) throws Exception;
 }

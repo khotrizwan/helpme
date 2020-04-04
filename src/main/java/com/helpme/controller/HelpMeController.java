@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.helpme.config.HelpMeContants;
 import com.helpme.model.LoginBean;
 import com.helpme.model.NeedBean;
 import com.helpme.model.NeedListResponse;
 import com.helpme.model.ResponseBean;
 import com.helpme.model.UserBean;
 import com.helpme.service.UserService;
-import com.helpme.util.HelpMeContants;
 
 @RestController
 public class HelpMeController {
@@ -26,9 +26,16 @@ public class HelpMeController {
 	
 	 private static final Logger logger = LogManager.getLogger(HelpMeController.class);
 	
-	@PostMapping("sendotp")
+	@PostMapping("requestotp")
 	@ResponseBody
-	public ResponseBean sendOTP(@RequestBody LoginBean login) {
+	public ResponseBean sendOTP(@RequestBody LoginBean loginBean) {
+		try {
+			loginBean = userService.generateAndSaveOTP(loginBean);
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("Exception", e);
+			return new ResponseBean(HelpMeContants.ERR_SERVER_ISSUE, HelpMeContants.MSG_SERVER_ISSUE);
+		}
 		return new ResponseBean(HelpMeContants.ERR_SUCCESS, HelpMeContants.MSG_SUCCESS);
 	}
 	

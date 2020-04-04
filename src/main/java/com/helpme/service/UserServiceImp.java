@@ -1,5 +1,6 @@
 package com.helpme.service;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7,8 +8,11 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.helpme.config.HelpMeContants;
 import com.helpme.model.LoginBean;
 import com.helpme.model.NeedBean;
 import com.helpme.model.NeedListResponse;
@@ -16,7 +20,7 @@ import com.helpme.model.UserBean;
 import com.helpme.repository.LoginRepository;
 import com.helpme.repository.NeedRepository;
 import com.helpme.repository.UserRepository;
-import com.helpme.util.HelpMeContants;
+import com.helpme.util.HelpMeUtil;
 
 @Service
 public class UserServiceImp implements UserService{
@@ -29,6 +33,9 @@ public class UserServiceImp implements UserService{
 
 	@Autowired
 	NeedRepository need;
+	
+	@Autowired
+	private Environment env;
 
 	@Override
 	public boolean login(LoginBean loginBean) {
@@ -109,6 +116,14 @@ public class UserServiceImp implements UserService{
 	@Override
 	public NeedListResponse userNeedsStatus(String mobileno) {
 		return getNeedsList(need.findByMobileno(mobileno));
+	}
+
+	@Override
+	public LoginBean generateAndSaveOTP(LoginBean loginBean) throws Exception {
+		loginBean.setOtp(HelpMeUtil.generateOTP());
+		loginBean = login.save(loginBean);
+		HelpMeUtil.sendOTP(loginBean, env.getProperty(HelpMeContants.COMPANY_NAME), env.getProperty(HelpMeContants.PARAM3), env.getProperty(HelpMeContants.AUTHKEY), env.getProperty(HelpMeContants.SMS_URL), env.getProperty(HelpMeContants.TEMPLATE_ID));
+		return loginBean;
 	}
 
 }
