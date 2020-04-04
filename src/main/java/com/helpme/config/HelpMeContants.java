@@ -3,6 +3,8 @@ package com.helpme.config;
 public class HelpMeContants {
 
 	
+	public static final String Y = "Y";
+	public static final String USER_TYPE_HELPFINDER = "HelpFinder";
 	public static String TEMPLATE_ID = "sms.template.id";
 	public static String UTF8 = "UTF-8";
 	public static String SMS_URL = "sms.url";

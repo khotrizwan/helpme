@@ -2,6 +2,7 @@ package com.helpme.service;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +48,12 @@ public class UserServiceImp implements UserService{
 	}
 
 	@Override
-	public UserBean saveUser(UserBean userBean) {		
+	public UserBean saveHelpFinder(UserBean userBean) {	
+		userBean.setIsAdmin(HelpMeContants.Y);
+		userBean.setUserType(HelpMeContants.USER_TYPE_HELPFINDER); //help_finder / service provider / volunteer / HelpMePlease 
+		userBean.setOrganizationId(1);
+		userBean.setIsActive(HelpMeContants.Y);
+		userBean.setCreateDate(new Date());
 		return user.save(userBean);
 	}
 

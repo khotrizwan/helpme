@@ -54,7 +54,7 @@ public class HelpMeController {
 		}
 	}
 	
-	@PostMapping("userDetails")
+	@PostMapping("createHelpFinder")
 	@ResponseBody
 	public ResponseBean createUser(@RequestBody UserBean userBean, HttpServletRequest request) {
 		logger.debug(userBean.toString());
@@ -69,7 +69,7 @@ public class HelpMeController {
 //			return new ResponseBean(HelpMeContants.ERR_INVALID_REQUEST, HelpMeContants.MSG_INVALID_REQUEST);
 //		}
 //		userBean.setMobileno(loginBean.getMobileno());
-		userBean = userService.saveUser(userBean);
+		userBean = userService.saveHelpFinder(userBean);
 		logger.debug("User Detailes Saved: " + userBean);
 		return new ResponseBean(HelpMeContants.ERR_SUCCESS, HelpMeContants.MSG_SUCCESS);
 	}
