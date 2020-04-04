@@ -1,6 +1,5 @@
 package com.helpme.service;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -12,14 +11,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.helpme.config.HelpMeContants;
 import com.helpme.model.LoginBean;
 import com.helpme.model.NeedBean;
 import com.helpme.model.NeedListResponse;
+import com.helpme.model.OrgBean;
 import com.helpme.model.UserBean;
 import com.helpme.repository.LoginRepository;
 import com.helpme.repository.NeedRepository;
+import com.helpme.repository.OrgRepository;
 import com.helpme.repository.UserRepository;
 import com.helpme.util.HelpMeUtil;
 
@@ -31,6 +31,9 @@ public class UserServiceImp implements UserService{
 
 	@Autowired
 	UserRepository user;
+	
+	@Autowired
+	OrgRepository org;
 
 	@Autowired
 	NeedRepository need;
@@ -56,6 +59,31 @@ public class UserServiceImp implements UserService{
 		userBean.setCreateDate(new Date());
 		return user.save(userBean);
 	}
+	
+	@Override
+	public OrgBean saveServiceProvider(OrgBean orgBean) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	private OrgBean saveOrganization(OrgBean orgBean) {	
+		orgBean.setOrgType(HelpMeContants.ORG_TYPE_SERVICE_PROVIDER);; //service_provider / Volunteer / HelpmePlease / HelpFinder
+		orgBean.setIsIndividual(HelpMeContants.N);
+		orgBean.setCanAccept(HelpMeContants.N);
+		orgBean.setIsActive(HelpMeContants.Y);
+		orgBean.setCreateDate(new Date());
+		return org.save(orgBean);
+	}
+	
+	private UserBean saveServiceProviderUser(UserBean userBean) {	
+		userBean.setIsAdmin(HelpMeContants.Y);
+		userBean.setUserType(HelpMeContants.USER_TYPE_SERVICE_PROVIDER); //help_finder / service provider / volunteer / HelpMePlease 
+		userBean.setOrganizationId(1);
+		userBean.setIsActive(HelpMeContants.Y);
+		userBean.setCreateDate(new Date());
+		return user.save(userBean);
+	}
+	
 
 	@Override
 	public List<UserBean> userList() {
@@ -131,5 +159,7 @@ public class UserServiceImp implements UserService{
 		HelpMeUtil.sendOTP(loginBean, env.getProperty(HelpMeContants.COMPANY_NAME), env.getProperty(HelpMeContants.PARAM3), env.getProperty(HelpMeContants.AUTHKEY), env.getProperty(HelpMeContants.SMS_URL), env.getProperty(HelpMeContants.TEMPLATE_ID));
 		return loginBean;
 	}
+
+	
 
 }

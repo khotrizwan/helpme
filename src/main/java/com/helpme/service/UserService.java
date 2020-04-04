@@ -1,20 +1,19 @@
 package com.helpme.service;
 
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.stereotype.Service;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.helpme.model.LoginBean;
 import com.helpme.model.NeedBean;
 import com.helpme.model.NeedListResponse;
+import com.helpme.model.OrgBean;
 import com.helpme.model.UserBean;
 
 public interface UserService {
 	public boolean login(LoginBean loginBean);
 	public UserBean saveHelpFinder(UserBean userBean);
+	public OrgBean saveServiceProvider(OrgBean orgUserBean);
+	
 	public List<UserBean> userList();
 	public NeedBean saveNeed(NeedBean needBean);
 	public List<NeedBean> userNeeds();
