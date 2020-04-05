@@ -14,17 +14,19 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import com.helpme.config.HelpMeContants;
-import com.helpme.model.LoginBean;
 import com.helpme.model.HelpBean;
 import com.helpme.model.HelpHistoryBean;
 import com.helpme.model.HelpItemQueueBean;
 import com.helpme.model.HelpListResponse;
+import com.helpme.model.LoginBean;
 import com.helpme.model.OrgBean;
+import com.helpme.model.OrgHelpCategory;
 import com.helpme.model.UserBean;
-import com.helpme.repository.LoginRepository;
 import com.helpme.repository.HelpHistoryRepository;
 import com.helpme.repository.HelpItemQueueRepositore;
 import com.helpme.repository.HelpRepository;
+import com.helpme.repository.LoginRepository;
+import com.helpme.repository.OrgHelpCategoryRepo;
 import com.helpme.repository.OrgRepository;
 import com.helpme.repository.UserRepository;
 import com.helpme.util.HelpMeUtil;
@@ -40,6 +42,9 @@ public class UserServiceImp implements UserService{
 
 	@Autowired
 	OrgRepository org;
+	
+	@Autowired
+	OrgHelpCategoryRepo orgHelpCat;
 
 	@Autowired
 	HelpRepository help;
@@ -136,13 +141,113 @@ public class UserServiceImp implements UserService{
 		return (List<UserBean>) user.findAll();
 	}
 
+	/**
+	 * - Create Help Entry for User
+	 * - Based on userId fetch cityId of Users
+	 * - Find all service providers in the city who are serving user selected Help Category
+	 * - if only one SP  :: assign to this SP
+	 * - if less than 10
+	 * 	  - Assign into Help Category user Queue
+	 * - If more than 10
+	 * 	  - Get Latitude,Longitude of the user from  userTable
+	 *    - Find all the SP's serving selected Help Category within 3 KM range ( Use Algo )
+	 *    - Map these SP's to Help Category user Queue
+	 * 
+	 * @param helpBean
+	 * @return
+	 */
 	@Override
-	public HelpBean createHelp(HelpBean helpBean) {
+	public HelpBean createHelp(HelpBean helpBean) 
+	{
 		helpBean.setHelpItemStatus(HelpMeContants.STATUS_OPEN);
 		helpBean.setCreateDate(new Date());
-		return help.save(helpBean);
+		helpBean = help.save(helpBean);
+		
+		Optional<UserBean> requestSeeker = user.findById(helpBean.getUserId());
+		if(requestSeeker.isPresent()) 
+		{
+			UserBean requestSeekerBean = requestSeeker.get();
+			List<OrgBean> spsToSeekHelp = new ArrayList<OrgBean>();
+			
+			// Getting all the service providers 
+			//TODO :: Appply and Query
+//			List<OrgBean> serviceProviders = org.findByOrgType(HelpMeContants.USER_TYPE_SERVICE_PROVIDER);
+			List<OrgBean> serviceProviders = new ArrayList<OrgBean>();
+			List<OrgHelpCategory> serviceProvidersForCat = orgHelpCat.findByHelpCategory(helpBean.getHelpCategoryId());
+			
+			for(OrgHelpCategory serviceProviderCat:serviceProvidersForCat)
+			{
+				Optional<OrgBean> serviceProvider =   org.findById(serviceProviderCat.getOrganizationId());
+				if(serviceProvider.isPresent())
+				{
+					serviceProviders.add(serviceProvider.get());
+				}
+			}
+			
+			// Same City
+			for(OrgBean serviceProvider:serviceProviders)
+			{
+				// Checking SP's are of Seeker's city
+				if(serviceProvider.getCityId() == requestSeekerBean.getCityId())
+				{
+					spsToSeekHelp.add(serviceProvider);
+				}
+			}
+			
+			// Checking size
+			if(spsToSeekHelp.size() == 1)
+			{
+				// Assign to this SP
+				//return
+			}
+			
+			if (spsToSeekHelp.size() < 10)
+			{
+				insertIntoQueue(helpBean, spsToSeekHelp);
+				return helpBean;
+			}
+			
+			// Lat Long Logic
+			for (int i=0;i<spsToSeekHelp.size();i++)	
+			{
+				OrgBean serviceProvider = spsToSeekHelp.get(i);
+				double distance = HelpMeUtil.getDistance(Long.valueOf(requestSeekerBean.getLatitude()), Long.valueOf(requestSeekerBean.getLongitude()), 
+														 Long.valueOf(serviceProvider.getLatitude()),   Long.valueOf(serviceProvider.getLongitude()));
+				
+				if(distance > 3)
+				{
+					spsToSeekHelp.remove(i);
+					continue;
+				}
+			}
+			
+			if( spsToSeekHelp.size() != 0 )
+			{
+				// Assigning to all service providers within 3 km range
+				insertIntoQueue(helpBean, spsToSeekHelp);
+				return helpBean;
+			}
+			
+			// In worst case assign to all service providers for category selected
+			insertIntoQueue(helpBean, serviceProviders);
+			return helpBean;
+			
+		}
+		
+		return null;
 	}
-
+	
+	private void insertIntoQueue(HelpBean helpBean, List<OrgBean> serviceProviders)
+	{
+		for(OrgBean serviceProvider:serviceProviders)
+		{
+			HelpItemQueueBean bean = new HelpItemQueueBean();
+			bean.setHelpItemId(helpBean.getId());
+			bean.setUserId(serviceProvider.getId());
+			helpItemQueue.save(bean);
+		}
+	}
+	
 	@Override
 	public List<HelpBean> userNeeds() {
 		return (List<HelpBean>) help.findAll();

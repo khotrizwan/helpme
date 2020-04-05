@@ -13,7 +13,7 @@ public class HelpBean {
 	@GeneratedValue
 	private int id;
 	private int userId;
-	private String helpCategoryId;
+	private int helpCategoryId;
 	private String helpText;
 	private String helpItemStatus; //OPEN/ACCEPTED/REJECTED/RESOLVED/CLOSED/UN_RESOLVED
 	private int assignedUserId;
@@ -37,10 +37,10 @@ public class HelpBean {
 	public void setUserId(int userId) {
 		this.userId = userId;
 	}
-	public String getHelpCategoryId() {
+	public int getHelpCategoryId() {
 		return helpCategoryId;
 	}
-	public void setHelpCategoryId(String helpCategoryId) {
+	public void setHelpCategoryId(int helpCategoryId) {
 		this.helpCategoryId = helpCategoryId;
 	}
 	public String getHelpText() {
