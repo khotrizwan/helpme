@@ -62,8 +62,24 @@ public class UserServiceImp implements UserService{
 	
 	@Override
 	public OrgBean saveServiceProvider(OrgBean orgBean) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		saveOrganization(orgBean);
+		
+		UserBean userBean = new UserBean();
+		userBean.setMobileno(orgBean.getMobileNumber());
+		userBean.setFirstName(orgBean.getFirstName());
+		userBean.setMiddleName(orgBean.getMiddleName()) ;
+		userBean.setLastName(orgBean.getLastName());
+		userBean.setEmailAddress(orgBean.getEmailAddress());
+		userBean.setLatitude(orgBean.getLatitude());
+		userBean.setLongitude(orgBean.getLongitude());
+		userBean.setAddress(orgBean.getAddress());
+		userBean.setCityId(orgBean.getCityId());
+		userBean.setOrganizationId(orgBean.getId());
+		
+		saveServiceProviderUser(userBean);
+		
+		return orgBean;
 	}
 	
 	private OrgBean saveOrganization(OrgBean orgBean) {	
