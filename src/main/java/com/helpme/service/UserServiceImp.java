@@ -16,10 +16,12 @@ import org.springframework.stereotype.Service;
 import com.helpme.config.HelpMeContants;
 import com.helpme.model.LoginBean;
 import com.helpme.model.HelpBean;
+import com.helpme.model.HelpHistoryBean;
 import com.helpme.model.HelpListResponse;
 import com.helpme.model.OrgBean;
 import com.helpme.model.UserBean;
 import com.helpme.repository.LoginRepository;
+import com.helpme.repository.HelpHistoryRepository;
 import com.helpme.repository.HelpRepository;
 import com.helpme.repository.OrgRepository;
 import com.helpme.repository.UserRepository;
@@ -39,6 +41,9 @@ public class UserServiceImp implements UserService{
 
 	@Autowired
 	HelpRepository help;
+	
+	@Autowired
+	HelpHistoryRepository helpHistory;
 
 	@Autowired
 	private Environment env;
@@ -70,13 +75,13 @@ public class UserServiceImp implements UserService{
 	
 	@Override
 	@Transactional
-	public OrgBean saveServiceProvider(OrgBean orgBean) {
+	public UserBean saveServiceProvider(OrgBean orgBean) {
 		// TODO Auto-generated method stub
 		orgBean = saveOrganization(orgBean);
 		System.out.println(orgBean.getId());
 
 		UserBean userBean = new UserBean();
-		userBean.setMobileno(orgBean.getMobileNumber());
+		userBean.setMobileno(orgBean.getMobileno());
 		userBean.setFirstName(orgBean.getFirstName());
 		userBean.setMiddleName(orgBean.getMiddleName());
 		userBean.setLastName(orgBean.getLastName());
@@ -90,7 +95,7 @@ public class UserServiceImp implements UserService{
 		saveServiceProviderUser(userBean);	
 		System.out.println("In  saveServiceProvider User ID: "+ userBean.getId());
 		
-		return orgBean;
+		return userBean;
 		
 	}
 
@@ -231,6 +236,7 @@ public class UserServiceImp implements UserService{
 	}
 
 	@Override
+	@Transactional
 	public HelpBean updateHelp(int helpItemId, int userId, String itemStatus) {
 		Optional<HelpBean> helpBean = help.findById(helpItemId);
 		if(helpBean.isPresent()) {
@@ -244,7 +250,14 @@ public class UserServiceImp implements UserService{
 				}
 				dbHelpBean.setUpdateBy(userId);
 				dbHelpBean.setHelpItemStatus(itemStatus);
-				help.save(dbHelpBean);
+				dbHelpBean = help.save(dbHelpBean);
+				HelpHistoryBean historyBean = new HelpHistoryBean();
+				historyBean.setHelpItemId(dbHelpBean.getId());
+				historyBean.setHelpItemStatus(dbHelpBean.getHelpItemStatus());
+				historyBean.setHelpText(dbHelpBean.getHelpText());
+				historyBean.setCreateDate(new Date());
+				historyBean.setCreatedBy(userId);
+				historyBean = helpHistory.save(historyBean);
 				return dbHelpBean;
 			}
 		}

@@ -14,6 +14,7 @@ import com.helpme.config.HelpMeContants;
 import com.helpme.model.OrgBean;
 import com.helpme.model.ResponseBean;
 import com.helpme.model.UserBean;
+import com.helpme.model.UserResponse;
 import com.helpme.service.UserService;
 
 @RestController
@@ -41,7 +42,11 @@ public class CreateEntityController {
 //			userBean.setMobileno(loginBean.getMobileno());
 			userBean = userService.saveHelpFinder(userBean);
 			logger.debug("User Detailes Saved: " + userBean);
-			return new ResponseBean(HelpMeContants.ERR_SUCCESS, HelpMeContants.MSG_SUCCESS);
+			UserResponse response = new UserResponse();
+			response.setErrCode(HelpMeContants.ERR_SUCCESS);
+			response.setErrMsg(HelpMeContants.MSG_SUCCESS);
+			response.setUserBean(userBean);
+			return response;
 		}
 		
 		
@@ -50,9 +55,13 @@ public class CreateEntityController {
 		public ResponseBean createServiceProvider(@RequestBody OrgBean orgBean) {
 			logger.debug(orgBean.toString());
 
-			orgBean = userService.saveServiceProvider(orgBean);
+			UserBean userBean = userService.saveServiceProvider(orgBean);
 			logger.debug("Organization Details Saved: " + orgBean);
-			return new ResponseBean(HelpMeContants.ERR_SUCCESS, HelpMeContants.MSG_SUCCESS);
+			UserResponse response = new UserResponse();
+			response.setErrCode(HelpMeContants.ERR_SUCCESS);
+			response.setErrMsg(HelpMeContants.MSG_SUCCESS);
+			response.setUserBean(userBean);
+			return response;
 		}
 	 
 	 

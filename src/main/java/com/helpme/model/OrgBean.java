@@ -13,7 +13,7 @@ public class OrgBean {
 	private int id;
 	private String orgName;
 	private String orgDesc;
-	private String mobileNumber;
+	private String mobileno;
 	private String firstName;
 	private String middleName;
 	private String lastName;
@@ -45,11 +45,12 @@ public class OrgBean {
 	public void setOrgDesc(String orgDesc) {
 		this.orgDesc = orgDesc;
 	}
-	public String getMobileNumber() {
-		return mobileNumber;
+
+	public String getMobileno() {
+		return mobileno;
 	}
-	public void setMobileNumber(String mobileNumber) {
-		this.mobileNumber = mobileNumber;
+	public void setMobileno(String mobileno) {
+		this.mobileno = mobileno;
 	}
 	public String getFirstName() {
 		return firstName;
@@ -135,7 +136,7 @@ public class OrgBean {
 	}
 	@Override
 	public String toString() {
-		return "OrgBean [id=" + id + ", orgName=" + orgName + ", orgDesc=" + orgDesc + ", mobileNumber=" + mobileNumber
+		return "OrgBean [id=" + id + ", orgName=" + orgName + ", orgDesc=" + orgDesc + ", mobileno=" + mobileno
 				+ ", firstName=" + firstName + ", middleName=" + middleName + ", lastName=" + lastName
 				+ ", emailAddress=" + emailAddress + ", latitude=" + latitude + ", longitude=" + longitude
 				+ ", address=" + address + ", cityId=" + cityId + ", orgType=" + orgType + ", isIndividual="

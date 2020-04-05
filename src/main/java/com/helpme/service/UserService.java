@@ -12,7 +12,7 @@ import com.helpme.model.UserBean;
 public interface UserService {
 	public boolean login(LoginBean loginBean);
 	public UserBean saveHelpFinder(UserBean userBean);
-	public OrgBean saveServiceProvider(OrgBean orgUserBean);
+	public UserBean saveServiceProvider(OrgBean orgUserBean);
 	
 	public List<UserBean> userList();
 	public HelpBean createHelp(HelpBean needBean);

@@ -54,9 +54,6 @@ public class HelpMeController {
 			return new ResponseBean(HelpMeContants.ERR_LOGIN_FAILED, HelpMeContants.MSG_LOGIN_FAILED);
 		}
 	}
-	
-
-	
 
 	/*-
 	@GetMapping("userDetails")
