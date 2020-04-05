@@ -68,6 +68,12 @@ public class UserServiceImp implements UserService{
 	 * "latitude":"1234", "longitude":"5678", "address":"abcd", "cityId":10
 	 */
 	
+	/*
+	 * "mobileno":"8169275469", "firstName":"Parth", "middleName":"",
+	 * "lastName":"Nemana", "emailAddress":"parth8nemana@gmail.com",
+	 * "latitude":"1234", "longitude":"5678", "address":"abcd", "cityId":10
+	 */
+	
 	@Override
 	@Transactional
 	public OrgBean saveServiceProvider(OrgBean orgBean) {
@@ -96,8 +102,6 @@ public class UserServiceImp implements UserService{
 
 	private OrgBean saveOrganization(OrgBean orgBean) {	
 		orgBean.setOrgType(HelpMeContants.ORG_TYPE_SERVICE_PROVIDER);; //service_provider / Volunteer / HelpmePlease / HelpFinder
-		orgBean.setIsIndividual(HelpMeContants.N);
-		orgBean.setCanAccept(HelpMeContants.N);
 		orgBean.setIsActive(HelpMeContants.Y);
 		orgBean.setCreateDate(new Date());
 		return org.save(orgBean);
