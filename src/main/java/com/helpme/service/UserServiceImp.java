@@ -62,12 +62,6 @@ public class UserServiceImp implements UserService{
 		return user.save(userBean);
 	}
 	
-	/*
-	 * "mobileno":"8169275469", "firstName":"Parth", "middleName":"",
-	 * "lastName":"Nemana", "emailAddress":"parth8nemana@gmail.com",
-	 * "latitude":"1234", "longitude":"5678", "address":"abcd", "cityId":10
-	 */
-	
 	@Override
 	@Transactional
 	public OrgBean saveServiceProvider(OrgBean orgBean) {
