@@ -17,11 +17,13 @@ import com.helpme.config.HelpMeContants;
 import com.helpme.model.LoginBean;
 import com.helpme.model.HelpBean;
 import com.helpme.model.HelpHistoryBean;
+import com.helpme.model.HelpItemQueueBean;
 import com.helpme.model.HelpListResponse;
 import com.helpme.model.OrgBean;
 import com.helpme.model.UserBean;
 import com.helpme.repository.LoginRepository;
 import com.helpme.repository.HelpHistoryRepository;
+import com.helpme.repository.HelpItemQueueRepositore;
 import com.helpme.repository.HelpRepository;
 import com.helpme.repository.OrgRepository;
 import com.helpme.repository.UserRepository;
@@ -45,6 +47,9 @@ public class UserServiceImp implements UserService{
 	@Autowired
 	HelpHistoryRepository helpHistory;
 
+	@Autowired
+	HelpItemQueueRepositore helpItemQueue;
+	
 	@Autowired
 	private Environment env;
 
@@ -162,7 +167,7 @@ public class UserServiceImp implements UserService{
 		return map;
 	}
 
-	private HelpListResponse getNeedsList(List<HelpBean> helps) {
+	private HelpListResponse getHelpItemLists(List<HelpBean> helps, String helpItemStatus) {
 		List<HelpBean> pending = new ArrayList<HelpBean>();
 		List<HelpBean> accepted = new ArrayList<HelpBean>();
 		List<HelpBean> close = new ArrayList<HelpBean>();
@@ -172,17 +177,17 @@ public class UserServiceImp implements UserService{
 
 		for (HelpBean helpBean : helps) {
 			String key = helpBean.getHelpItemStatus();
-			if(key.equalsIgnoreCase(HelpMeContants.STATUS_OPEN)) {
+			if((helpItemStatus==null || helpItemStatus.equals(HelpMeContants.STATUS_OPEN)) && key.equalsIgnoreCase(HelpMeContants.STATUS_OPEN)) {
 				pending.add(helpBean);
-			} else if(key.equalsIgnoreCase(HelpMeContants.STATUS_ACCEPTED)) {
+			} else if((helpItemStatus==null || helpItemStatus.equals(HelpMeContants.STATUS_ACCEPTED)) && key.equalsIgnoreCase(HelpMeContants.STATUS_ACCEPTED)) {
 				accepted.add(helpBean);
-			} else if(key.equalsIgnoreCase(HelpMeContants.STATUS_CLOSED)) {
+			} else if((helpItemStatus==null || helpItemStatus.equals(HelpMeContants.STATUS_CLOSED)) && key.equalsIgnoreCase(HelpMeContants.STATUS_CLOSED)) {
 				close.add(helpBean);
-			} else if(key.equalsIgnoreCase(HelpMeContants.STATUS_REJECTED)) {
+			} else if((helpItemStatus==null || helpItemStatus.equals(HelpMeContants.STATUS_REJECTED)) && key.equalsIgnoreCase(HelpMeContants.STATUS_REJECTED)) {
 				rejected.add(helpBean);
-			} else if(key.equalsIgnoreCase(HelpMeContants.STATUS_RESOLVED)) {
+			} else if((helpItemStatus==null || helpItemStatus.equals(HelpMeContants.STATUS_RESOLVED)) && key.equalsIgnoreCase(HelpMeContants.STATUS_RESOLVED)) {
 				resolved.add(helpBean);
-			} else if(key.equalsIgnoreCase(HelpMeContants.STATUS_UN_RESOLVED)) {
+			} else if((helpItemStatus==null || helpItemStatus.equals(HelpMeContants.STATUS_UN_RESOLVED)) && key.equalsIgnoreCase(HelpMeContants.STATUS_UN_RESOLVED)) {
 				unresolved.add(helpBean);
 			}
 		}
@@ -203,15 +208,28 @@ public class UserServiceImp implements UserService{
 	}
 
 	@Override
-	public HelpListResponse userHelpList(int userId) {
-		Optional<UserBean> userBean = user.findById(userId);
-		if(userBean.isPresent()) { 
-			if(userBean.get().getUserType().equals(HelpMeContants.USER_TYPE_HELPFINDER)) {
-				return getNeedsList(help.findByUserId(userId));
-			} else if(userBean.get().getUserType().equals(HelpMeContants.USER_TYPE_SERVICE_PROVIDER)) { 
-				return getNeedsList(help.findByAssignedUserId(userId));
-			} else if(userBean.get().getUserType().equals(HelpMeContants.USER_TYPE_VOLUNTEER)) {
-				return getNeedsList(help.findByVolunteerUserId(userId));
+	public HelpListResponse userHelpList(int userId, String helpItemStatus) {
+		if(helpItemStatus != null && helpItemStatus.equals(HelpMeContants.STATUS_UN_ASSIGNED)) {
+			List<HelpItemQueueBean> queue = helpItemQueue.findByUserId(userId);
+			List<Integer> helpItems = new ArrayList<>();
+			for (HelpItemQueueBean helpItem : queue) {
+				helpItems.add(helpItem.getHelpItemId());
+			}
+			if(helpItems.size() > 0) {
+				return getHelpItemLists((List<HelpBean>)help.findAllById(helpItems), HelpMeContants.STATUS_OPEN);
+			} else {
+				return  new HelpListResponse();
+			}
+		} else {
+			Optional<UserBean> userBean = user.findById(userId);
+			if(userBean.isPresent()) { 
+				if(userBean.get().getUserType().equals(HelpMeContants.USER_TYPE_HELPFINDER)) {
+					return getHelpItemLists(help.findByUserId(userId), helpItemStatus);
+				} else if(userBean.get().getUserType().equals(HelpMeContants.USER_TYPE_SERVICE_PROVIDER)) { 
+					return getHelpItemLists(help.findByAssignedUserId(userId), helpItemStatus);
+				} else if(userBean.get().getUserType().equals(HelpMeContants.USER_TYPE_VOLUNTEER)) {
+					return getHelpItemLists(help.findByVolunteerUserId(userId), helpItemStatus);
+				}
 			}
 		}
 		return null;

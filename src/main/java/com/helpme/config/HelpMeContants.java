@@ -9,6 +9,7 @@ public class HelpMeContants {
 	public static final String ORG_TYPE_SERVICE_PROVIDER = "ServiceProvider";
 	public static final String N = "N";
 	public static final String USER_TYPE_VOLUNTEER = "Volunteer";
+	public static final Object STATUS_UN_ASSIGNED = "UN_ASSIGNED";
 	public static String TEMPLATE_ID = "sms.template.id";
 	public static String UTF8 = "UTF-8";
 	public static String SMS_URL = "sms.url";

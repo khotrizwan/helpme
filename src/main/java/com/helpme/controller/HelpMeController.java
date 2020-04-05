@@ -116,7 +116,7 @@ public class HelpMeController {
 	@ResponseBody
 	public ResponseBean getHelpList(@RequestParam int userId, @RequestParam String helpItemStatus, HttpServletRequest request) {
 		logger.debug("userId: " + userId + " helpItemStatus:" + helpItemStatus);
-		HelpListResponse helpListResponse = userService.userHelpList(userId);
+		HelpListResponse helpListResponse = userService.userHelpList(userId, helpItemStatus);
 		helpListResponse.setErrCode(HelpMeContants.ERR_SUCCESS);
 		helpListResponse.setErrMsg(HelpMeContants.MSG_SUCCESS);
 		logger.debug("list Need response: " + helpListResponse.toString());

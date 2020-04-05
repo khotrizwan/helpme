@@ -19,7 +19,7 @@ public interface UserService {
 	public List<HelpBean> userNeeds();
 	public List<HelpBean> userNeeds(String mobileno);
 	public Map<String, List<HelpBean>> userNeedsStatus();
-	public HelpListResponse userHelpList(int userId);
+	public HelpListResponse userHelpList(int userId, String helpItemStatus);
 	public LoginBean generateAndSaveOTP(LoginBean loginBean) throws Exception;
 	public HelpBean assignHelp(int helpItemId, int userId);
 	public HelpBean updateHelp(int helpItemId, int userId, String itemStatus);
