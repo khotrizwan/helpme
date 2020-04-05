@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
@@ -60,16 +62,40 @@ public class UserServiceImp implements UserService{
 		return user.save(userBean);
 	}
 	
+	/*
+	 * "mobileno":"8169275469", "firstName":"Parth", "middleName":"",
+	 * "lastName":"Nemana", "emailAddress":"parth8nemana@gmail.com",
+	 * "latitude":"1234", "longitude":"5678", "address":"abcd", "cityId":10
+	 */
+	
 	@Override
+	@Transactional
 	public OrgBean saveServiceProvider(OrgBean orgBean) {
 		// TODO Auto-generated method stub
-		return null;
+		orgBean = saveOrganization(orgBean);
+		System.out.println(orgBean.getId());
+
+		UserBean userBean = new UserBean();
+		userBean.setMobileno(orgBean.getMobileNumber());
+		userBean.setFirstName(orgBean.getFirstName());
+		userBean.setMiddleName(orgBean.getMiddleName());
+		userBean.setLastName(orgBean.getLastName());
+		userBean.setEmailAddress(orgBean.getEmailAddress());
+		userBean.setLatitude(orgBean.getLatitude());
+		userBean.setLongitude(orgBean.getLongitude());
+		userBean.setAddress(orgBean.getAddress());
+		userBean.setCityId(orgBean.getCityId());
+		userBean.setOrganizationId(orgBean.getId());
+		System.out.println("In  saveServiceProvider Org ID: " + orgBean.getId());
+		saveServiceProviderUser(userBean);	
+		System.out.println("In  saveServiceProvider User ID: "+ userBean.getId());
+		
+		return orgBean;
+		
 	}
 	
 	private OrgBean saveOrganization(OrgBean orgBean) {	
 		orgBean.setOrgType(HelpMeContants.ORG_TYPE_SERVICE_PROVIDER);; //service_provider / Volunteer / HelpmePlease / HelpFinder
-		orgBean.setIsIndividual(HelpMeContants.N);
-		orgBean.setCanAccept(HelpMeContants.N);
 		orgBean.setIsActive(HelpMeContants.Y);
 		orgBean.setCreateDate(new Date());
 		return org.save(orgBean);
@@ -78,7 +104,6 @@ public class UserServiceImp implements UserService{
 	private UserBean saveServiceProviderUser(UserBean userBean) {	
 		userBean.setIsAdmin(HelpMeContants.Y);
 		userBean.setUserType(HelpMeContants.USER_TYPE_SERVICE_PROVIDER); //help_finder / service provider / volunteer / HelpMePlease 
-		userBean.setOrganizationId(1);
 		userBean.setIsActive(HelpMeContants.Y);
 		userBean.setCreateDate(new Date());
 		return user.save(userBean);

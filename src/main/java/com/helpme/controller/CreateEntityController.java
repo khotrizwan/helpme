@@ -45,7 +45,7 @@ public class CreateEntityController {
 		}
 		
 		
-		@PostMapping("createServiceProviderer")
+		@PostMapping("createServiceProvider")
 		@ResponseBody
 		public ResponseBean createServiceProvider(@RequestBody OrgBean orgBean) {
 			logger.debug(orgBean.toString());
