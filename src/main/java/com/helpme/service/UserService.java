@@ -21,4 +21,6 @@ public interface UserService {
 	public Map<String, List<HelpBean>> userNeedsStatus();
 	public HelpListResponse userHelpList(int userId);
 	public LoginBean generateAndSaveOTP(LoginBean loginBean) throws Exception;
+	public HelpBean assignHelp(int helpItemId, int userId);
+	public HelpBean updateHelp(int helpItemId, int userId, String itemStatus);
 }

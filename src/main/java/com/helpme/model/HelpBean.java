@@ -6,7 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
-@Entity(name="need")
+@Entity(name="help_item")
 public class HelpBean {
 
 	@Id
@@ -20,7 +20,7 @@ public class HelpBean {
 	private int volunteerUserId;
 	private Date createDate;
 	private Date updateDate;
-	private String updateBy;
+	private int updateBy;
 	
 	public HelpBean() {
 		// TODO Auto-generated constructor stub
@@ -78,11 +78,11 @@ public class HelpBean {
 	}
 	public void setUpdateDate(Date updateDate) {
 		this.updateDate = updateDate;
-	}
-	public String getUpdateBy() {
+	}	
+	public int getUpdateBy() {
 		return updateBy;
 	}
-	public void setUpdateBy(String updateBy) {
+	public void setUpdateBy(int updateBy) {
 		this.updateBy = updateBy;
 	}
 	
