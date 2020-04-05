@@ -33,7 +33,7 @@ public class UserServiceImp implements UserService{
 
 	@Autowired
 	UserRepository user;
-	
+
 	@Autowired
 	OrgRepository org;
 
@@ -61,6 +61,12 @@ public class UserServiceImp implements UserService{
 		userBean.setCreateDate(new Date());
 		return user.save(userBean);
 	}
+
+	/*
+	 * "mobileno":"8169275469", "firstName":"Parth", "middleName":"",
+	 * "lastName":"Nemana", "emailAddress":"parth8nemana@gmail.com",
+	 * "latitude":"1234", "longitude":"5678", "address":"abcd", "cityId":10
+	 */
 	
 	@Override
 	@Transactional
@@ -87,14 +93,14 @@ public class UserServiceImp implements UserService{
 		return orgBean;
 		
 	}
-	
+
 	private OrgBean saveOrganization(OrgBean orgBean) {	
 		orgBean.setOrgType(HelpMeContants.ORG_TYPE_SERVICE_PROVIDER);; //service_provider / Volunteer / HelpmePlease / HelpFinder
 		orgBean.setIsActive(HelpMeContants.Y);
 		orgBean.setCreateDate(new Date());
 		return org.save(orgBean);
 	}
-	
+
 	private UserBean saveServiceProviderUser(UserBean userBean) {	
 		userBean.setIsAdmin(HelpMeContants.Y);
 		userBean.setUserType(HelpMeContants.USER_TYPE_SERVICE_PROVIDER); //help_finder / service provider / volunteer / HelpMePlease 
@@ -112,6 +118,7 @@ public class UserServiceImp implements UserService{
 	@Override
 	public HelpBean createHelp(HelpBean helpBean) {
 		helpBean.setHelpItemStatus(HelpMeContants.STATUS_OPEN);
+		helpBean.setCreateDate(new Date());
 		return help.save(helpBean);
 	}
 
@@ -202,6 +209,47 @@ public class UserServiceImp implements UserService{
 		return loginBean;
 	}
 
-	
+	@Override
+	public HelpBean assignHelp(int helpItemId, int userId) {
+		Optional<HelpBean> helpBean = help.findById(helpItemId);
+		if(helpBean.isPresent()) {
+			Optional<UserBean> userBean = user.findById(userId);
+			if(userBean.isPresent()) {
+				HelpBean dbHelpBean = helpBean.get();
+				if(userBean.get().getUserType().equals(HelpMeContants.USER_TYPE_SERVICE_PROVIDER)) {
+					dbHelpBean.setAssignedUserId(userId);
+				} else if(userBean.get().getUserType().equals(HelpMeContants.USER_TYPE_VOLUNTEER)) {
+					dbHelpBean.setVolunteerUserId(userId);
+				}
+				help.save(dbHelpBean);
+				return dbHelpBean;
+			}
+		}
 
+		
+		return null;
+	}
+
+	@Override
+	public HelpBean updateHelp(int helpItemId, int userId, String itemStatus) {
+		Optional<HelpBean> helpBean = help.findById(helpItemId);
+		if(helpBean.isPresent()) {
+			Optional<UserBean> userBean = user.findById(userId);
+			if(userBean.isPresent()) {
+				HelpBean dbHelpBean = helpBean.get();
+				if(userBean.get().getUserType().equals(HelpMeContants.USER_TYPE_SERVICE_PROVIDER)) {
+					dbHelpBean.setAssignedUserId(userId);
+				} else if(userBean.get().getUserType().equals(HelpMeContants.USER_TYPE_VOLUNTEER)) {
+					dbHelpBean.setVolunteerUserId(userId);
+				}
+				dbHelpBean.setUpdateBy(userId);
+				dbHelpBean.setHelpItemStatus(itemStatus);
+				help.save(dbHelpBean);
+				return dbHelpBean;
+			}
+		}
+
+		
+		return null;
+	}
 }

@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -72,6 +73,32 @@ public class HelpMeController {
 		logger.debug("User Detailes: " + helpBean.toString());
 		helpBean = userService.createHelp(helpBean);
 		logger.debug("User Detailes Saved: " + helpBean.toString());
+		return new ResponseBean(HelpMeContants.ERR_SUCCESS, HelpMeContants.MSG_SUCCESS);
+	}
+	
+	@PostMapping("assignHelp/{helpItemId}/{userId}")
+	@ResponseBody
+	public ResponseBean assignHelp(@PathVariable int helpItemId, @PathVariable int userId, HttpServletRequest request) {
+		logger.debug("helpItemId: " + helpItemId + " userId:" + userId);
+		HelpBean helpBean = userService.assignHelp(helpItemId, userId);
+		if(helpBean == null) {
+			logger.debug("Assign Help Failed: NULL");
+			return new ResponseBean(HelpMeContants.ERR_SERVER_ISSUE, HelpMeContants.MSG_SERVER_ISSUE);
+		}
+		logger.debug("Assign Help Saved: " + helpBean.toString());
+		return new ResponseBean(HelpMeContants.ERR_SUCCESS, HelpMeContants.MSG_SUCCESS);
+	}
+	
+	@PostMapping("updatenHelp/{helpItemId}/{userId}/{itemStatus}")
+	@ResponseBody
+	public ResponseBean updateHelp(@PathVariable int helpItemId, @PathVariable int userId, @PathVariable String itemStatus, HttpServletRequest request) {
+		logger.debug("helpItemId: " + helpItemId + " userId:" + userId);
+		HelpBean helpBean = userService.updateHelp(helpItemId, userId, itemStatus);
+		if(helpBean == null) {
+			logger.debug("Assign Help Failed: NULL");
+			return new ResponseBean(HelpMeContants.ERR_SERVER_ISSUE, HelpMeContants.MSG_SERVER_ISSUE);
+		}
+		logger.debug("Assign Help Saved: " + helpBean.toString());
 		return new ResponseBean(HelpMeContants.ERR_SUCCESS, HelpMeContants.MSG_SUCCESS);
 	}
 	
