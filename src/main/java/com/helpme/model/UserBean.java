@@ -26,6 +26,8 @@ public class UserBean {
 	private int organizationId;
 	private String isActive;
 	private Date createDate;
+
+	private String otp;
 	
 	public UserBean() {
 		// TODO Auto-generated constructor stub
@@ -149,6 +151,15 @@ public class UserBean {
 
 	public void setCreateDate(Date createDate) {
 		this.createDate = createDate;
+	}
+
+	
+	public String getOtp() {
+		return otp;
+	}
+
+	public void setOtp(String otp) {
+		this.otp = otp;
 	}
 
 	@Override

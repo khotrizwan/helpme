@@ -16,10 +16,12 @@ import org.springframework.stereotype.Service;
 import com.helpme.config.HelpMeContants;
 import com.helpme.model.LoginBean;
 import com.helpme.model.HelpBean;
+import com.helpme.model.HelpHistoryBean;
 import com.helpme.model.HelpListResponse;
 import com.helpme.model.OrgBean;
 import com.helpme.model.UserBean;
 import com.helpme.repository.LoginRepository;
+import com.helpme.repository.HelpHistoryRepository;
 import com.helpme.repository.HelpRepository;
 import com.helpme.repository.OrgRepository;
 import com.helpme.repository.UserRepository;
@@ -41,25 +43,35 @@ public class UserServiceImp implements UserService{
 	HelpRepository help;
 
 	@Autowired
+	HelpHistoryRepository helpHistory;
+
+	@Autowired
 	private Environment env;
 
 	@Override
-	public boolean login(LoginBean loginBean) {
+	public UserBean login(LoginBean loginBean) {
 		Optional<LoginBean> bdDetails = login.findById(loginBean.getMobileno());
-		if(bdDetails.isPresent() && bdDetails.get().getOtp().equals(loginBean.getOtp())) 
-			return true;
+		if(bdDetails.isPresent() && bdDetails.get().getOtp().equals(loginBean.getOtp())) {
+			Optional<UserBean> userOptional = user.findByMobileno(loginBean.getMobileno());
+			if(userOptional.isPresent())
+				return userOptional.get();
+		}
 
-		return false;
+		return null;
 	}
 
 	@Override
 	public UserBean saveHelpFinder(UserBean userBean) {	
-		userBean.setIsAdmin(HelpMeContants.Y);
-		userBean.setUserType(HelpMeContants.USER_TYPE_HELPFINDER); //help_finder / service provider / volunteer / HelpMePlease 
-		userBean.setOrganizationId(1);
-		userBean.setIsActive(HelpMeContants.Y);
-		userBean.setCreateDate(new Date());
-		return user.save(userBean);
+		Optional<LoginBean> bdDetails = login.findById(userBean.getMobileno());
+		if(bdDetails.isPresent() && bdDetails.get().getOtp().equals(userBean.getOtp())) {
+			userBean.setIsAdmin(HelpMeContants.Y);
+			userBean.setUserType(HelpMeContants.USER_TYPE_HELPFINDER); //help_finder / service provider / volunteer / HelpMePlease 
+			userBean.setOrganizationId(1);
+			userBean.setIsActive(HelpMeContants.Y);
+			userBean.setCreateDate(new Date());
+			return user.save(userBean);
+		}
+		return null;
 	}
 
 	/*
@@ -67,31 +79,35 @@ public class UserServiceImp implements UserService{
 	 * "lastName":"Nemana", "emailAddress":"parth8nemana@gmail.com",
 	 * "latitude":"1234", "longitude":"5678", "address":"abcd", "cityId":10
 	 */
-	
+
 	@Override
 	@Transactional
-	public OrgBean saveServiceProvider(OrgBean orgBean) {
-		// TODO Auto-generated method stub
-		orgBean = saveOrganization(orgBean);
-		System.out.println(orgBean.getId());
+	public UserBean saveServiceProvider(OrgBean orgBean) {
+		Optional<LoginBean> bdDetails = login.findById(orgBean.getMobileno());
+		if(bdDetails.isPresent() && bdDetails.get().getOtp().equals(orgBean.getOtp())) {
+			// TODO Auto-generated method stub
+			orgBean = saveOrganization(orgBean);
+			System.out.println(orgBean.getId());
 
-		UserBean userBean = new UserBean();
-		userBean.setMobileno(orgBean.getMobileNumber());
-		userBean.setFirstName(orgBean.getFirstName());
-		userBean.setMiddleName(orgBean.getMiddleName());
-		userBean.setLastName(orgBean.getLastName());
-		userBean.setEmailAddress(orgBean.getEmailAddress());
-		userBean.setLatitude(orgBean.getLatitude());
-		userBean.setLongitude(orgBean.getLongitude());
-		userBean.setAddress(orgBean.getAddress());
-		userBean.setCityId(orgBean.getCityId());
-		userBean.setOrganizationId(orgBean.getId());
-		System.out.println("In  saveServiceProvider Org ID: " + orgBean.getId());
-		saveServiceProviderUser(userBean);	
-		System.out.println("In  saveServiceProvider User ID: "+ userBean.getId());
-		
-		return orgBean;
-		
+			UserBean userBean = new UserBean();
+			userBean.setMobileno(orgBean.getMobileno());
+			userBean.setFirstName(orgBean.getFirstName());
+			userBean.setMiddleName(orgBean.getMiddleName());
+			userBean.setLastName(orgBean.getLastName());
+			userBean.setEmailAddress(orgBean.getEmailAddress());
+			userBean.setLatitude(orgBean.getLatitude());
+			userBean.setLongitude(orgBean.getLongitude());
+			userBean.setAddress(orgBean.getAddress());
+			userBean.setCityId(orgBean.getCityId());
+			userBean.setOrganizationId(orgBean.getId());
+			System.out.println("In  saveServiceProvider Org ID: " + orgBean.getId());
+			saveServiceProviderUser(userBean);	
+			System.out.println("In  saveServiceProvider User ID: "+ userBean.getId());
+
+			return userBean;
+		} 
+		return null;
+
 	}
 
 	private OrgBean saveOrganization(OrgBean orgBean) {	
@@ -108,7 +124,7 @@ public class UserServiceImp implements UserService{
 		userBean.setCreateDate(new Date());
 		return user.save(userBean);
 	}
-	
+
 
 	@Override
 	public List<UserBean> userList() {
@@ -226,11 +242,12 @@ public class UserServiceImp implements UserService{
 			}
 		}
 
-		
+
 		return null;
 	}
 
 	@Override
+	@Transactional
 	public HelpBean updateHelp(int helpItemId, int userId, String itemStatus) {
 		Optional<HelpBean> helpBean = help.findById(helpItemId);
 		if(helpBean.isPresent()) {
@@ -244,12 +261,19 @@ public class UserServiceImp implements UserService{
 				}
 				dbHelpBean.setUpdateBy(userId);
 				dbHelpBean.setHelpItemStatus(itemStatus);
-				help.save(dbHelpBean);
+				dbHelpBean = help.save(dbHelpBean);
+				HelpHistoryBean historyBean = new HelpHistoryBean();
+				historyBean.setHelpItemId(dbHelpBean.getId());
+				historyBean.setHelpItemStatus(dbHelpBean.getHelpItemStatus());
+				historyBean.setHelpText(dbHelpBean.getHelpText());
+				historyBean.setCreateDate(new Date());
+				historyBean.setCreatedBy(userId);
+				historyBean = helpHistory.save(historyBean);
 				return dbHelpBean;
 			}
 		}
 
-		
+
 		return null;
 	}
 }

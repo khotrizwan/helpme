@@ -15,7 +15,7 @@ public class HelpBean {
 	private int userId;
 	private String helpCategoryId;
 	private String helpText;
-	private String helpItemStatus; //OPEN/ACCEPTED/IN_PROGRESS/REJECTED/RESOLVED/CLOSED/UN_RESOLVED
+	private String helpItemStatus; //OPEN/ACCEPTED/REJECTED/RESOLVED/CLOSED/UN_RESOLVED
 	private int assignedUserId;
 	private int volunteerUserId;
 	private Date createDate;
