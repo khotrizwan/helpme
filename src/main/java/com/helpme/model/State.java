@@ -3,32 +3,31 @@ package com.helpme.model;
 import java.sql.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity(name="state")
 public class State
 {
-	private long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private int id;
 	
 	private String name;
 	
 	@JsonIgnore
 	private int countryId;
 	
-	@JsonIgnore
-	private Date creationDate;
-	
-	@JsonIgnore
-	private Date modificationDate;
-	
 	public State(){}
 
-	public long getId() {
+	public int getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
@@ -48,22 +47,5 @@ public class State
 		this.countryId = countryId;
 	}
 
-	public Date getCreationDate() {
-		return creationDate;
-	}
-
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
-	}
-
-	public Date getModificationDate() {
-		return modificationDate;
-	}
-
-	public void setModificationDate(Date modificationDate) {
-		this.modificationDate = modificationDate;
-	}
-	
-	
 
 }
