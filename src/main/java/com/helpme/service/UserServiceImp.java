@@ -173,7 +173,7 @@ public class UserServiceImp implements UserService{
 			//TODO :: Appply and Query
 //			List<OrgBean> serviceProviders = org.findByOrgType(HelpMeContants.USER_TYPE_SERVICE_PROVIDER);
 			List<OrgBean> serviceProviders = new ArrayList<OrgBean>();
-			List<OrgHelpCategory> serviceProvidersForCat = orgHelpCat.findByHelpCategory(helpBean.getHelpCategoryId());
+			List<OrgHelpCategory> serviceProvidersForCat = orgHelpCat.findByHelpCategoryId(helpBean.getHelpCategoryId());
 			
 			for(OrgHelpCategory serviceProviderCat:serviceProvidersForCat)
 			{
@@ -197,8 +197,11 @@ public class UserServiceImp implements UserService{
 			// Checking size
 			if(spsToSeekHelp.size() == 1)
 			{
-				// Assign to this SP
-				//return
+				HelpItemQueueBean bean = new HelpItemQueueBean();
+				bean.setHelpItemId(helpBean.getId());
+				bean.setUserId(helpBean.getId());
+				helpItemQueue.save(bean);
+				return helpBean;
 			}
 			
 			if (spsToSeekHelp.size() < 10)
@@ -234,7 +237,7 @@ public class UserServiceImp implements UserService{
 			
 		}
 		
-		return null;
+		return helpBean;
 	}
 	
 	private void insertIntoQueue(HelpBean helpBean, List<OrgBean> serviceProviders)
@@ -282,17 +285,17 @@ public class UserServiceImp implements UserService{
 
 		for (HelpBean helpBean : helps) {
 			String key = helpBean.getHelpItemStatus();
-			if((helpItemStatus==null || helpItemStatus.equals(HelpMeContants.STATUS_OPEN)) && key.equalsIgnoreCase(HelpMeContants.STATUS_OPEN)) {
+			if((helpItemStatus==null || helpItemStatus.trim().length() == 0 || helpItemStatus.equals(HelpMeContants.STATUS_OPEN)) && key.equalsIgnoreCase(HelpMeContants.STATUS_OPEN)) {
 				pending.add(helpBean);
-			} else if((helpItemStatus==null || helpItemStatus.equals(HelpMeContants.STATUS_ACCEPTED)) && key.equalsIgnoreCase(HelpMeContants.STATUS_ACCEPTED)) {
+			} else if((helpItemStatus==null || helpItemStatus.trim().length() == 0 || helpItemStatus.equals(HelpMeContants.STATUS_ACCEPTED)) && key.equalsIgnoreCase(HelpMeContants.STATUS_ACCEPTED)) {
 				accepted.add(helpBean);
-			} else if((helpItemStatus==null || helpItemStatus.equals(HelpMeContants.STATUS_CLOSED)) && key.equalsIgnoreCase(HelpMeContants.STATUS_CLOSED)) {
+			} else if((helpItemStatus==null || helpItemStatus.trim().length() == 0 || helpItemStatus.equals(HelpMeContants.STATUS_CLOSED)) && key.equalsIgnoreCase(HelpMeContants.STATUS_CLOSED)) {
 				close.add(helpBean);
-			} else if((helpItemStatus==null || helpItemStatus.equals(HelpMeContants.STATUS_REJECTED)) && key.equalsIgnoreCase(HelpMeContants.STATUS_REJECTED)) {
+			} else if((helpItemStatus==null || helpItemStatus.trim().length() == 0 || helpItemStatus.equals(HelpMeContants.STATUS_REJECTED)) && key.equalsIgnoreCase(HelpMeContants.STATUS_REJECTED)) {
 				rejected.add(helpBean);
-			} else if((helpItemStatus==null || helpItemStatus.equals(HelpMeContants.STATUS_RESOLVED)) && key.equalsIgnoreCase(HelpMeContants.STATUS_RESOLVED)) {
+			} else if((helpItemStatus==null || helpItemStatus.trim().length() == 0 || helpItemStatus.equals(HelpMeContants.STATUS_RESOLVED)) && key.equalsIgnoreCase(HelpMeContants.STATUS_RESOLVED)) {
 				resolved.add(helpBean);
-			} else if((helpItemStatus==null || helpItemStatus.equals(HelpMeContants.STATUS_UN_RESOLVED)) && key.equalsIgnoreCase(HelpMeContants.STATUS_UN_RESOLVED)) {
+			} else if((helpItemStatus==null || helpItemStatus.trim().length() == 0 || helpItemStatus.equals(HelpMeContants.STATUS_UN_RESOLVED)) && key.equalsIgnoreCase(HelpMeContants.STATUS_UN_RESOLVED)) {
 				unresolved.add(helpBean);
 			}
 		}
@@ -300,7 +303,7 @@ public class UserServiceImp implements UserService{
 		HelpListResponse helpListResponse = new HelpListResponse();
 		helpListResponse.setAccepted(accepted);
 		helpListResponse.setClose(close);
-		helpListResponse.setPending(pending);
+		helpListResponse.setOpen(pending);
 		helpListResponse.setRejected(rejected);
 		helpListResponse.setResolved(resolved);
 		helpListResponse.setUnresolved(unresolved);
@@ -322,8 +325,6 @@ public class UserServiceImp implements UserService{
 			}
 			if(helpItems.size() > 0) {
 				return getHelpItemLists((List<HelpBean>)help.findAllById(helpItems), HelpMeContants.STATUS_OPEN);
-			} else {
-				return  new HelpListResponse();
 			}
 		} else {
 			Optional<UserBean> userBean = user.findById(userId);
@@ -337,7 +338,7 @@ public class UserServiceImp implements UserService{
 				}
 			}
 		}
-		return null;
+		return  new HelpListResponse();
 	}
 
 	@Override

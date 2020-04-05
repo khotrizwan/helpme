@@ -114,7 +114,7 @@ public class HelpMeController {
 	
 	@PostMapping("listhelp")
 	@ResponseBody
-	public ResponseBean getHelpList(@RequestParam int userId, @RequestParam String helpItemStatus, HttpServletRequest request) {
+	public ResponseBean getHelpList(@RequestParam int userId, @RequestParam(required = false) String helpItemStatus, HttpServletRequest request) {
 		logger.debug("userId: " + userId + " helpItemStatus:" + helpItemStatus);
 		HelpListResponse helpListResponse = userService.userHelpList(userId, helpItemStatus);
 		helpListResponse.setErrCode(HelpMeContants.ERR_SUCCESS);

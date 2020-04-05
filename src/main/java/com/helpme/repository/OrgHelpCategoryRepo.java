@@ -10,8 +10,6 @@ import com.helpme.model.OrgHelpCategory;
 @Repository
 public interface OrgHelpCategoryRepo extends CrudRepository<OrgHelpCategory, Integer>{
 	
-	List<OrgHelpCategory> findByOrgId(Integer organizationId);
-	
-	List<OrgHelpCategory> findByHelpCategory(Integer helpCategoryId);
+	List<OrgHelpCategory> findByHelpCategoryId(Integer helpCategoryId);
 
 }

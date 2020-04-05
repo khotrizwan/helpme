@@ -1,11 +1,12 @@
 package com.helpme.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class HelpListResponse extends ResponseBean{
 	
-	private List<HelpBean> pending;
+	private List<HelpBean> open;
 	private List<HelpBean> accepted;
 	private List<HelpBean> close;
 	private List<HelpBean> rejected;
@@ -14,17 +15,22 @@ public class HelpListResponse extends ResponseBean{
 	
 	
 	public HelpListResponse() {
-		super();
+		open = new ArrayList<HelpBean>();
+		accepted = new ArrayList<HelpBean>();
+		close = new ArrayList<HelpBean>();
+		rejected = new ArrayList<HelpBean>();
+		resolved = new ArrayList<HelpBean>();
+		unresolved = new ArrayList<HelpBean>();
 	}
 
 
-	public List<HelpBean> getPending() {
-		return pending;
+	public List<HelpBean> getOpen() {
+		return open;
 	}
 
 
-	public void setPending(List<HelpBean> pending) {
-		this.pending = pending;
+	public void setOpen(List<HelpBean> open) {
+		this.open = open;
 	}
 
 
