@@ -197,8 +197,11 @@ public class UserServiceImp implements UserService{
 			// Checking size
 			if(spsToSeekHelp.size() == 1)
 			{
-				// Assign to this SP
-				//return
+				HelpItemQueueBean bean = new HelpItemQueueBean();
+				bean.setHelpItemId(helpBean.getId());
+				bean.setUserId(helpBean.getId());
+				helpItemQueue.save(bean);
+				return helpBean;
 			}
 			
 			if (spsToSeekHelp.size() < 10)
