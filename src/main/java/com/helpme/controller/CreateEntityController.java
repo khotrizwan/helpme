@@ -28,6 +28,7 @@ public class CreateEntityController {
 	@PostMapping("createHelpFinder")
 	@ResponseBody
 	public ResponseBean createUser(@RequestBody UserBean userBean, HttpServletRequest request) {
+		logger.debug("------ createHelpFinder ------------- ");
 		logger.debug(userBean.toString());
 		userBean = userService.saveHelpFinder(userBean);
 		if(userBean != null) {
@@ -46,7 +47,8 @@ public class CreateEntityController {
 	@PostMapping("createVolunteer")
 	@ResponseBody
 	public ResponseBean createVolunteer(@RequestBody UserBean userBean, HttpServletRequest request) {
-		logger.debug(userBean.toString());
+		logger.debug("------ createVolunteer ------------- ");
+		logger.debug("createVolunteer" + userBean.toString());
 		userBean = userService.saveVolunteer(userBean);
 		if(userBean != null) {
 			logger.debug("User Detailes Saved: " + userBean);
@@ -63,7 +65,8 @@ public class CreateEntityController {
 	@PostMapping("createServiceProvider")
 	@ResponseBody
 	public ResponseBean createServiceProvider(@RequestBody OrgBean orgBean) {
-		logger.debug(orgBean.toString());
+		logger.debug("------ createServiceProvider ------------- ");
+		logger.debug("createVolunteer" + orgBean.toString());
 
 		UserBean userBean = userService.saveServiceProvider(orgBean);
 		if(userBean != null) {

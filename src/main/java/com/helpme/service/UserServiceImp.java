@@ -95,7 +95,12 @@ public class UserServiceImp implements UserService{
 			userBean.setOrganizationId(organizationId);
 			userBean.setIsActive(HelpMeContants.Y);
 			userBean.setCreateDate(new Date());
-			return user.save(userBean);
+			logger.debug("Before Save User " + userBean);
+			userBean = user.save(userBean);
+			logger.debug("After Save User " + userBean);
+			return userBean; 
+		} else {
+			logger.debug("Invalid OTP");
 		}
 		return null;
 	}
@@ -115,7 +120,7 @@ public class UserServiceImp implements UserService{
 			// TODO Auto-generated method stub
 			orgBean = saveOrganization(orgBean);
 			saveOrgHelpCategory(orgBean);
-			System.out.println(orgBean.getId());
+			logger.debug(orgBean.getId());
 
 			UserBean userBean = new UserBean();
 			userBean.setMobileno(orgBean.getMobileno());
@@ -133,7 +138,9 @@ public class UserServiceImp implements UserService{
 			logger.debug("In  saveServiceProvider User ID: "+ userBean.getId());
 
 			return userBean;
-		} 
+		} else {
+			logger.debug("Invalid OTP");
+		}
 		return null;
 
 	}

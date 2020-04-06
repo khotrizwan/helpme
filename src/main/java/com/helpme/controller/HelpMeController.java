@@ -36,6 +36,7 @@ public class HelpMeController {
 	@PostMapping("requestotp")
 	@ResponseBody
 	public ResponseBean sendOTP(@RequestBody LoginBean loginBean) {
+		logger.debug("------ requestotp ------------- ");
 		try {
 			loginBean = userService.generateAndSaveOTP(loginBean);
 		} catch (Exception e) {
@@ -49,6 +50,7 @@ public class HelpMeController {
 	@PostMapping("login")
 	@ResponseBody
 	public ResponseBean login(@RequestBody LoginBean loginBean, HttpServletRequest request) {
+		logger.debug("------ login ------------- ");
 		logger.debug(loginBean.toString());
 		UserBean userBean = userService.login(loginBean);
 		if(userBean != null) {
@@ -78,6 +80,7 @@ public class HelpMeController {
 	@PostMapping("createHelp")
 	@ResponseBody
 	public ResponseBean createHelp(@RequestBody HelpBean helpBean, HttpServletRequest request) {
+		logger.debug("------ createHelp ------------- ");
 		logger.debug("User Detailes: " + helpBean.toString());
 		helpBean = userService.createHelp(helpBean);
 		logger.debug("User Detailes Saved: " + helpBean.toString());
@@ -91,6 +94,7 @@ public class HelpMeController {
 	@PostMapping("assignHelp/{helpItemId}/{userId}")
 	@ResponseBody
 	public ResponseBean assignHelp(@PathVariable int helpItemId, @PathVariable int userId, HttpServletRequest request) {
+		logger.debug("------ createHelp ------------- ");
 		logger.debug("helpItemId: " + helpItemId + " userId:" + userId);
 		HelpBean helpBean = userService.assignHelp(helpItemId, userId);
 		if(helpBean == null) {
@@ -104,6 +108,7 @@ public class HelpMeController {
 	@PostMapping("/listServiceProvider/{cityId}/{categoryId}")
 	@ResponseBody
 	public ResponseBean listServiceProvider(@PathVariable int cityId, @PathVariable int categoryId, HttpServletRequest request) {
+		logger.debug("------ listServiceProvider ------------- ");
 		logger.debug("cityId: " + cityId + " categoryId:" + categoryId);
 		List<UserBean> users = userService.listServiceProvider(cityId, categoryId);
 		if(users == null) {
@@ -121,6 +126,7 @@ public class HelpMeController {
 	@PostMapping("updatenHelp/{helpItemId}/{userId}/{itemStatus}")
 	@ResponseBody
 	public ResponseBean updateHelp(@PathVariable int helpItemId, @PathVariable int userId, @PathVariable String itemStatus, HttpServletRequest request) {
+		logger.debug("------ updatenHelp ------------- ");
 		logger.debug("helpItemId: " + helpItemId + " userId:" + userId);
 		HelpBean helpBean = userService.updateHelp(helpItemId, userId, itemStatus);
 		if(helpBean == null) {
@@ -134,6 +140,7 @@ public class HelpMeController {
 	@PostMapping("listhelp")
 	@ResponseBody
 	public ResponseBean getHelpList(@RequestParam int userId, @RequestParam(required = false) String helpItemStatus, HttpServletRequest request) {
+		logger.debug("------ listhelp ------------- ");
 		logger.debug("userId: " + userId + " helpItemStatus:" + helpItemStatus);
 		HelpListResponse helpListResponse = userService.userHelpList(userId, helpItemStatus);
 		helpListResponse.setErrCode(HelpMeContants.ERR_SUCCESS);

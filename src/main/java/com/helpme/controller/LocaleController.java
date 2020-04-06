@@ -1,5 +1,7 @@
 package com.helpme.controller;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -13,6 +15,7 @@ import com.sun.istack.NotNull;
 @RestController
 public class LocaleController 
 {
+	private static final Logger logger = LogManager.getLogger(CreateEntityController.class);
 	@Autowired
 	LocaleService localeService;
 	
@@ -20,6 +23,7 @@ public class LocaleController
 	@ResponseBody
 	ResponseBean getCountries()
 	{
+		logger.debug("------ countries ------------- ");
 		return localeService.getCountries();
 	}
 	
@@ -27,6 +31,7 @@ public class LocaleController
 	@ResponseBody
 	ResponseBean getStates(@RequestParam(name="countryId") @NotNull String countryId)
 	{
+		logger.debug("------ states ------------- ");
 		return localeService.getStates(countryId);
 	}
 	
@@ -34,6 +39,7 @@ public class LocaleController
 	@ResponseBody
 	ResponseBean getCities(@RequestParam(name="stateId") @NotNull String stateId)
 	{
+		logger.debug("------ cities ------------- ");
 		return localeService.getCities(stateId);
 	}
 
