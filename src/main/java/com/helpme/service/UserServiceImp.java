@@ -133,7 +133,7 @@ public class UserServiceImp implements UserService{
 		for(String catId : catIds) {
 			OrgHelpCategory orgHelpCategory = new OrgHelpCategory();
 			orgHelpCategory.setOrganizationId(orgBean.getId());
-			orgHelpCategory.setHelpCategoryId(Integer.parseInt(catId));
+			orgHelpCategory.setHelpCategoryId(Integer.parseInt(catId.trim()));
 			orgHelpCategory.setIsActive(HelpMeContants.Y);
 			orgHelpCategory.setCreateDate(new Date());
 			orgHelpCategories.add(orgHelpCategory);
