@@ -9,4 +9,5 @@ import com.helpme.model.HelpItemQueueBean;
 
 public interface HelpItemQueueRepositore extends CrudRepository<HelpItemQueueBean, Integer> {
 	List<HelpItemQueueBean> findByUserId(int userId);
+	void deleteByHelpItemId(int helpItemId);
 }

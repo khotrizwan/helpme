@@ -6,82 +6,83 @@ import java.util.Map;
 
 public class HelpListResponse extends ResponseBean{
 	
-	private List<HelpBean> open;
-	private List<HelpBean> accepted;
-	private List<HelpBean> close;
-	private List<HelpBean> rejected;
-	private List<HelpBean> resolved;
-	private List<HelpBean> unresolved;
+	private List<HelpResponseBean> open;
+	private List<HelpResponseBean> accepted;
+	private List<HelpResponseBean> close;
+	private List<HelpResponseBean> rejected;
+	private List<HelpResponseBean> resolved;
+	private List<HelpResponseBean> unresolved;
 	
 	
 	public HelpListResponse() {
-		open = new ArrayList<HelpBean>();
-		accepted = new ArrayList<HelpBean>();
-		close = new ArrayList<HelpBean>();
-		rejected = new ArrayList<HelpBean>();
-		resolved = new ArrayList<HelpBean>();
-		unresolved = new ArrayList<HelpBean>();
+		open = new ArrayList<HelpResponseBean>();
+		accepted = new ArrayList<HelpResponseBean>();
+		close = new ArrayList<HelpResponseBean>();
+		rejected = new ArrayList<HelpResponseBean>();
+		resolved = new ArrayList<HelpResponseBean>();
+		unresolved = new ArrayList<HelpResponseBean>();
 	}
 
 
-	public List<HelpBean> getOpen() {
+	public List<HelpResponseBean> getOpen() {
 		return open;
 	}
 
 
-	public void setOpen(List<HelpBean> open) {
+	public void setOpen(List<HelpResponseBean> open) {
 		this.open = open;
 	}
 
 
-	public List<HelpBean> getAccepted() {
+	public List<HelpResponseBean> getAccepted() {
 		return accepted;
 	}
 
 
-	public void setAccepted(List<HelpBean> accepted) {
+	public void setAccepted(List<HelpResponseBean> accepted) {
 		this.accepted = accepted;
 	}
 
 
-	public List<HelpBean> getClose() {
+	public List<HelpResponseBean> getClose() {
 		return close;
 	}
 
 
-	public void setClose(List<HelpBean> close) {
+	public void setClose(List<HelpResponseBean> close) {
 		this.close = close;
 	}
 
 
-	public List<HelpBean> getRejected() {
+	public List<HelpResponseBean> getRejected() {
 		return rejected;
 	}
 
 
-	public void setRejected(List<HelpBean> rejected) {
+	public void setRejected(List<HelpResponseBean> rejected) {
 		this.rejected = rejected;
 	}
 
 
-	public List<HelpBean> getResolved() {
+	public List<HelpResponseBean> getResolved() {
 		return resolved;
 	}
 
 
-	public void setResolved(List<HelpBean> resolved) {
+	public void setResolved(List<HelpResponseBean> resolved) {
 		this.resolved = resolved;
 	}
 
 
-	public List<HelpBean> getUnresolved() {
+	public List<HelpResponseBean> getUnresolved() {
 		return unresolved;
 	}
 
 
-	public void setUnresolved(List<HelpBean> unresolved) {
+	public void setUnresolved(List<HelpResponseBean> unresolved) {
 		this.unresolved = unresolved;
 	}
+
 
 	
 }

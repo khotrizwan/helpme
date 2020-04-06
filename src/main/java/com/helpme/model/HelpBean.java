@@ -25,6 +25,18 @@ public class HelpBean {
 	public HelpBean() {
 		// TODO Auto-generated constructor stub
 	}
+	public HelpBean(HelpBean helpBean) {
+		this.id = helpBean.getId();
+		this.userId = helpBean.getUserId();
+		this.helpCategoryId = helpBean.getHelpCategoryId();
+		this.helpText = helpBean.getHelpText();
+		this.helpItemStatus = helpBean.getHelpItemStatus();
+		this.assignedUserId = helpBean.getAssignedUserId();
+		this.volunteerUserId = helpBean.getVolunteerUserId();
+		this.createDate = helpBean.getCreateDate();
+		this.updateDate = helpBean.getUpdateDate();
+		this.updateBy = helpBean.getUpdateBy();
+	}
 	public int getId() {
 		return id;
 	}
