@@ -166,7 +166,7 @@ public class OrgBean {
 				+ ", emailAddress=" + emailAddress + ", latitude=" + latitude + ", longitude=" + longitude
 				+ ", address=" + address + ", cityId=" + cityId + ", orgType=" + orgType + ", isIndividual="
 				+ isIndividual + ", canAccept=" + canAccept + ", isActive=" + isActive + ", createDate=" + createDate
-				+ "]";
+				+ ", otp=" + otp + ", catIds=" + catIds + "]";
 	}
 	
 	
