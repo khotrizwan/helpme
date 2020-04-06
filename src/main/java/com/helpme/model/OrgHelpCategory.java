@@ -50,7 +50,11 @@ public class OrgHelpCategory
 	public void setCreateDate(Date createDate) {
 		this.createDate = createDate;
 	}
-	
-	
 
+	@Override
+	public String toString() {
+		return "OrgHelpCategory [id=" + id + ", organizationId=" + organizationId + ", helpCategoryId=" + helpCategoryId
+				+ ", isActive=" + isActive + ", createDate=" + createDate + "]";
+	}
+	
 }

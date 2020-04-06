@@ -9,11 +9,14 @@ import java.util.Optional;
 
 import javax.transaction.Transactional;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import com.helpme.config.HelpMeContants;
+import com.helpme.controller.HelpMeController;
 import com.helpme.model.HelpBean;
 import com.helpme.model.HelpHistoryBean;
 import com.helpme.model.HelpItemQueueBean;
@@ -34,6 +37,8 @@ import com.helpme.util.HelpMeUtil;
 @Service
 public class UserServiceImp implements UserService{
 
+	private static final Logger logger = LogManager.getLogger(HelpMeController.class);
+	
 	@Autowired
 	LoginRepository login;
 
@@ -97,6 +102,7 @@ public class UserServiceImp implements UserService{
 		if(bdDetails.isPresent() && bdDetails.get().getOtp().equals(orgBean.getOtp())) {
 			// TODO Auto-generated method stub
 			orgBean = saveOrganization(orgBean);
+			saveOrgHelpCategory(orgBean);
 			System.out.println(orgBean.getId());
 
 			UserBean userBean = new UserBean();
@@ -110,14 +116,30 @@ public class UserServiceImp implements UserService{
 			userBean.setAddress(orgBean.getAddress());
 			userBean.setCityId(orgBean.getCityId());
 			userBean.setOrganizationId(orgBean.getId());
-			System.out.println("In  saveServiceProvider Org ID: " + orgBean.getId());
+			logger.debug("In  saveServiceProvider Org ID: " + orgBean.getId());
 			saveServiceProviderUser(userBean);	
-			System.out.println("In  saveServiceProvider User ID: "+ userBean.getId());
+			logger.debug("In  saveServiceProvider User ID: "+ userBean.getId());
 
 			return userBean;
 		} 
 		return null;
 
+	}
+
+	private void saveOrgHelpCategory(OrgBean orgBean) {
+		String[] catIds = orgBean.getCatIds().split(HelpMeContants.CAT_SEPARATOR);
+		List<OrgHelpCategory> orgHelpCategories = new ArrayList<OrgHelpCategory>();
+		for(String catId : catIds) {
+			OrgHelpCategory orgHelpCategory = new OrgHelpCategory();
+			orgHelpCategory.setOrganizationId(orgBean.getId());
+			orgHelpCategory.setHelpCategoryId(Integer.parseInt(catId));
+			orgHelpCategory.setIsActive(HelpMeContants.Y);
+			orgHelpCategory.setCreateDate(new Date());
+			orgHelpCategories.add(orgHelpCategory);
+			logger.debug(orgHelpCategory.toString());
+		}
+		if(orgHelpCategories.size() > 0)
+		orgHelpCat.saveAll(orgHelpCategories);
 	}
 
 	private OrgBean saveOrganization(OrgBean orgBean) {	

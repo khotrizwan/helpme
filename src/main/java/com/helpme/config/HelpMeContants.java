@@ -10,6 +10,8 @@ public class HelpMeContants {
 	public static final String N = "N";
 	public static final String USER_TYPE_VOLUNTEER = "Volunteer";
 	public static final Object STATUS_UN_ASSIGNED = "UN_ASSIGNED";
+	public static final String ERR_CODE_EXCEPTION = "ERR500";
+	public static final String CAT_SEPARATOR = "\\,";
 	public static String TEMPLATE_ID = "sms.template.id";
 	public static String UTF8 = "UTF-8";
 	public static String SMS_URL = "sms.url";
@@ -26,7 +28,7 @@ public class HelpMeContants {
 	public static String ERR_INVALID_REQUEST = "ERR002";
 	public static String MSG_INVALID_REQUEST = "Something went wrong";
 	
-	public static String ERR_SERVER_ISSUE = "ERR0400";
+	public static String ERR_SERVER_ISSUE = "ERR400";
 	public static String MSG_SERVER_ISSUE = "Something went wrong";
 	
 	public static String STATUS_OPEN = "OPEN";

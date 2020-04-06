@@ -2,9 +2,15 @@ package com.helpme.model;
 
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.Size;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity(name="user")
 public class UserBean {
@@ -12,7 +18,11 @@ public class UserBean {
 	@Id
 	@GeneratedValue
 	private int id;
+	
+	@Column(unique=true, length=10)
 	private String mobileno;
+	
+	@Size(min = 3, max = 150)
 	private String firstName;
 	private String middleName;
 	private String lastName;
@@ -27,6 +37,7 @@ public class UserBean {
 	private String isActive;
 	private Date createDate;
 
+	@Transient
 	private String otp;
 	
 	public UserBean() {

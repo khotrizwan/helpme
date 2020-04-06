@@ -6,7 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
-@Entity(name="help_history_item")
+@Entity(name="help_item_history")
 public class HelpHistoryBean {
 	@Id
 	@GeneratedValue

@@ -55,8 +55,7 @@ public class HelpMeController {
 			UserResponse response = new UserResponse();
 			response.setErrCode(HelpMeContants.ERR_SUCCESS);
 			response.setErrMsg(HelpMeContants.MSG_SUCCESS);
-			response.setUserId(userBean.getId());
-			response.setOrgId(userBean.getOrganizationId());
+			response.setUserDetails(userBean);
 			return response;
 		} else {
 			logger.debug("Login Failed");

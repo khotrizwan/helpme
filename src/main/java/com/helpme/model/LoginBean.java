@@ -1,11 +1,14 @@
 package com.helpme.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.validation.constraints.Size;
 
 @Entity(name="login")
 public class LoginBean {
 	@Id
+	@Size(min = 10, max = 10)
 	private String mobileno;
 	private String otp;
 	

@@ -1,28 +1,23 @@
 package com.helpme.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties("otp")
 public class UserResponse extends ResponseBean {
 
-	int userId;
-	int orgId;
+	UserBean userDetails;
+	
 	
 	public UserResponse() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public int getUserId() {
-		return userId;
+	public UserBean getUserDetails() {
+		return userDetails;
 	}
 
-	public void setUserId(int userId) {
-		this.userId = userId;
-	}
-
-	public int getOrgId() {
-		return orgId;
-	}
-
-	public void setOrgId(int orgId) {
-		this.orgId = orgId;
+	public void setUserDetails(UserBean userDetails) {
+		this.userDetails = userDetails;
 	}
 	
 	

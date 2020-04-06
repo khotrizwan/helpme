@@ -5,6 +5,9 @@ import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Transient;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity(name="organization")
 public class OrgBean {
@@ -27,8 +30,12 @@ public class OrgBean {
 	private String canAccept;
 	private String isActive;
 	private Date createDate;
-	
+
+	@Transient
 	private String otp;
+	
+	@Transient
+	private String catIds;
 	
 	public int getId() {
 		return id;
@@ -143,6 +150,14 @@ public class OrgBean {
 	}
 	public void setOtp(String otp) {
 		this.otp = otp;
+	}
+	
+	
+	public String getCatIds() {
+		return catIds;
+	}
+	public void setCatIds(String catIds) {
+		this.catIds = catIds;
 	}
 	@Override
 	public String toString() {
