@@ -75,20 +75,31 @@ public class UserServiceImp implements UserService{
 
 		return null;
 	}
+	
 
 	@Override
 	public UserBean saveHelpFinder(UserBean userBean) {	
+		return createUser(userBean, 1, HelpMeContants.USER_TYPE_HELPFINDER);
+	}
+
+	@Override
+	public UserBean saveVolunteer(UserBean userBean) {	
+		return createUser(userBean, 2, HelpMeContants.USER_TYPE_VOLUNTEER);
+	}
+	
+	private UserBean createUser(UserBean userBean, int organizationId, String userType) {
 		Optional<LoginBean> bdDetails = login.findById(userBean.getMobileno());
 		if(bdDetails.isPresent() && bdDetails.get().getOtp().equals(userBean.getOtp())) {
 			userBean.setIsAdmin(HelpMeContants.Y);
-			userBean.setUserType(HelpMeContants.USER_TYPE_HELPFINDER); //help_finder / service provider / volunteer / HelpMePlease 
-			userBean.setOrganizationId(1);
+			userBean.setUserType(userType); //help_finder / service provider / volunteer / HelpMePlease 
+			userBean.setOrganizationId(organizationId);
 			userBean.setIsActive(HelpMeContants.Y);
 			userBean.setCreateDate(new Date());
 			return user.save(userBean);
 		}
 		return null;
 	}
+
 
 	/*
 	 * "mobileno":"8169275469", "firstName":"Parth", "middleName":"",
@@ -449,5 +460,14 @@ public class UserServiceImp implements UserService{
 
 
 		return null;
+	}
+	
+	@Override
+	public List<UserBean> listServiceProvider(int cityId, int categoryId) {
+		Optional<List<UserBean>> serviceProviders = user.getServiceProviders(cityId, categoryId, HelpMeContants.USER_TYPE_SERVICE_PROVIDER);
+		if(serviceProviders.isPresent()) {
+			return serviceProviders.get();
+		}		
+		return new ArrayList<UserBean>();
 	}
 }

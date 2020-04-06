@@ -1,5 +1,7 @@
 package com.helpme.controller;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.logging.log4j.LogManager;
@@ -19,6 +21,7 @@ import com.helpme.model.HelpItemResponse;
 import com.helpme.model.HelpListResponse;
 import com.helpme.model.ResponseBean;
 import com.helpme.model.UserBean;
+import com.helpme.model.UserListResponse;
 import com.helpme.model.UserResponse;
 import com.helpme.service.UserService;
 
@@ -96,6 +99,23 @@ public class HelpMeController {
 		}
 		logger.debug("Assign Help Saved: " + helpBean.toString());
 		return new ResponseBean(HelpMeContants.ERR_SUCCESS, HelpMeContants.MSG_SUCCESS);
+	}
+	
+	@PostMapping("/listServiceProvider/{cityId}/{categoryId}")
+	@ResponseBody
+	public ResponseBean listServiceProvider(@PathVariable int cityId, @PathVariable int categoryId, HttpServletRequest request) {
+		logger.debug("cityId: " + cityId + " categoryId:" + categoryId);
+		List<UserBean> users = userService.listServiceProvider(cityId, categoryId);
+		if(users == null) {
+			logger.debug("listServiceProvider Failed: NULL");
+			return new ResponseBean(HelpMeContants.ERR_SERVER_ISSUE, HelpMeContants.MSG_SERVER_ISSUE);
+		}
+		
+		UserListResponse response = new UserListResponse();
+		response.setErrCode(HelpMeContants.ERR_SUCCESS);
+		response.setErrMsg(HelpMeContants.MSG_SUCCESS);
+		response.setUsers(users);
+		return response;
 	}
 	
 	@PostMapping("updatenHelp/{helpItemId}/{userId}/{itemStatus}")

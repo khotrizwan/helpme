@@ -23,4 +23,6 @@ public interface UserService {
 	public LoginBean generateAndSaveOTP(LoginBean loginBean) throws Exception;
 	public HelpBean assignHelp(int helpItemId, int userId);
 	public HelpBean updateHelp(int helpItemId, int userId, String itemStatus);
+	public List<UserBean> listServiceProvider(int cityId, int categoryId);
+	public UserBean saveVolunteer(UserBean userBean);
 }

@@ -43,7 +43,23 @@ public class CreateEntityController {
 		}
 	}
 
-
+	@PostMapping("createVolunteer")
+	@ResponseBody
+	public ResponseBean createVolunteer(@RequestBody UserBean userBean, HttpServletRequest request) {
+		logger.debug(userBean.toString());
+		userBean = userService.saveVolunteer(userBean);
+		if(userBean != null) {
+			logger.debug("User Detailes Saved: " + userBean);
+			UserResponse response = new UserResponse();
+			response.setErrCode(HelpMeContants.ERR_SUCCESS);
+			response.setErrMsg(HelpMeContants.MSG_SUCCESS);
+			response.setUserDetails(userBean);
+			return response;
+		} else {
+			logger.debug("createHelpFinder Failed");
+			return new ResponseBean(HelpMeContants.ERR_LOGIN_FAILED, HelpMeContants.MSG_INVALID_REQUEST);
+		}
+	}
 	@PostMapping("createServiceProvider")
 	@ResponseBody
 	public ResponseBean createServiceProvider(@RequestBody OrgBean orgBean) {
