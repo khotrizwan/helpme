@@ -13,7 +13,7 @@ import com.helpme.model.ResponseBean;
 @ControllerAdvice
 public class APIExceptionHandler {
 
-	private static final Logger logger = LogManager.getLogger(HelpMeController.class);
+	private static final Logger logger = LogManager.getLogger(APIExceptionHandler.class);
 	@ExceptionHandler(Exception.class)
 	@ResponseBody
 	public ResponseBean handleException(Exception e) { {

@@ -15,7 +15,7 @@ import com.sun.istack.NotNull;
 @RestController
 public class LocaleController 
 {
-	private static final Logger logger = LogManager.getLogger(CreateEntityController.class);
+	private static final Logger logger = LogManager.getLogger(LocaleController.class);
 	@Autowired
 	LocaleService localeService;
 	

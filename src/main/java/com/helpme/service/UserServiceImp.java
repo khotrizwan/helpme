@@ -38,7 +38,7 @@ import com.helpme.util.HelpMeUtil;
 @Service
 public class UserServiceImp implements UserService{
 
-	private static final Logger logger = LogManager.getLogger(HelpMeController.class);
+	private static final Logger logger = LogManager.getLogger(UserServiceImp.class);
 
 	@Autowired
 	LoginRepository login;
@@ -75,22 +75,22 @@ public class UserServiceImp implements UserService{
 
 		return null;
 	}
-	
+
 
 	@Override
 	public UserBean saveHelpFinder(UserBean userBean) {	
-		return createUser(userBean, 1, HelpMeContants.USER_TYPE_HELPFINDER);
+		return createUser(userBean, 1, HelpMeContants.USER_TYPE_HELPFINDER, HelpMeContants.Y);
 	}
 
 	@Override
 	public UserBean saveVolunteer(UserBean userBean) {	
-		return createUser(userBean, 2, HelpMeContants.USER_TYPE_VOLUNTEER);
+		return createUser(userBean, 2, HelpMeContants.USER_TYPE_VOLUNTEER, HelpMeContants.N);
 	}
-	
-	private UserBean createUser(UserBean userBean, int organizationId, String userType) {
+
+	private UserBean createUser(UserBean userBean, int organizationId, String userType, String isAdmin) {
 		Optional<LoginBean> bdDetails = login.findById(userBean.getMobileno());
 		if(bdDetails.isPresent() && bdDetails.get().getOtp().equals(userBean.getOtp())) {
-			userBean.setIsAdmin(HelpMeContants.Y);
+			userBean.setIsAdmin(isAdmin);
 			userBean.setUserType(userType); //help_finder / service provider / volunteer / HelpMePlease 
 			userBean.setOrganizationId(organizationId);
 			userBean.setIsActive(HelpMeContants.Y);
@@ -224,7 +224,7 @@ public class UserServiceImp implements UserService{
 					serviceProviders.add(serviceProvider.get());
 				}
 			}
-
+			logger.debug(" City Check start: " + helpBean);
 			// Same City
 			for(OrgBean serviceProvider:serviceProviders)
 			{
@@ -234,23 +234,30 @@ public class UserServiceImp implements UserService{
 					spsToSeekHelp.add(serviceProvider);
 				}
 			}
-
+			logger.debug(" Size check start: " + helpBean);
 			// Checking size
 			if(spsToSeekHelp.size() == 1)
 			{
-				HelpItemQueueBean bean = new HelpItemQueueBean();
-				bean.setHelpItemId(helpBean.getId());
-				bean.setUserId(helpBean.getId());
-				helpItemQueue.save(bean);
+				logger.debug(" Only One Org: " + helpBean);
+				UserBean user = getUserByOrganisation(spsToSeekHelp.get(0));
+				if(user != null) {
+					helpBean.setAssignedUserId(user.getId());
+					helpBean.setHelpItemStatus(HelpMeContants.STATUS_ACCEPTED);
+					helpBean = help.save(helpBean);
+				}
 				return helpBean;
 			}
+			
+			
 
 			if (spsToSeekHelp.size() < 10)
 			{
+				logger.debug(" less than 10 orgs: " + helpBean);
 				insertIntoQueue(helpBean, spsToSeekHelp);
 				return helpBean;
 			}
 
+			logger.debug(" lat lang logic start: " + helpBean);
 			// Lat Long Logic
 			for (int i=0;i<spsToSeekHelp.size();i++)	
 			{
@@ -267,11 +274,13 @@ public class UserServiceImp implements UserService{
 
 			if( spsToSeekHelp.size() != 0 )
 			{
+				logger.debug(" orgs founds with lat lang logic: " + helpBean);
 				// Assigning to all service providers within 3 km range
 				insertIntoQueue(helpBean, spsToSeekHelp);
 				return helpBean;
 			}
 
+			logger.debug("all check failed or not orgs in neaby area: " + helpBean);
 			// In worst case assign to all service providers for category selected
 			insertIntoQueue(helpBean, serviceProviders);
 			return helpBean;
@@ -281,15 +290,38 @@ public class UserServiceImp implements UserService{
 		return helpBean;
 	}
 
+	private UserBean getUserByOrganisation(OrgBean orgBean) {
+		Optional<List<UserBean>> users = user.findByOrganizationId(orgBean.getId());
+		if(users.isPresent()) {
+			UserBean user = users.get().get(0);
+
+			for(UserBean usr : users.get()) {
+				if(usr.getIsAdmin().equals(HelpMeContants.Y)) {
+					user = usr;
+					break;
+				}
+			}
+
+			return user;
+		}
+		return null;
+	}
+
+
 	private void insertIntoQueue(HelpBean helpBean, List<OrgBean> serviceProviders)
 	{
+		logger.debug(" insertIntoQueue start: " + helpBean);
 		for(OrgBean serviceProvider:serviceProviders)
 		{
-			HelpItemQueueBean bean = new HelpItemQueueBean();
-			bean.setHelpItemId(helpBean.getId());
-			bean.setUserId(serviceProvider.getId());
-			helpItemQueue.save(bean);
+			UserBean user = getUserByOrganisation(serviceProvider);
+			if(user != null) {
+				HelpItemQueueBean bean = new HelpItemQueueBean();
+				bean.setHelpItemId(helpBean.getId());
+				bean.setUserId(user.getId());
+				helpItemQueue.save(bean);
+			}
 		}
+		logger.debug(" insertIntoQueue End: " + helpBean);
 	}
 
 	@Override
@@ -334,7 +366,7 @@ public class UserServiceImp implements UserService{
 			if(helpResponseBean.getAssignedUserId() > 0) {
 				Optional<UserBean> orgUserOptional = user.findById(helpResponseBean.getAssignedUserId());
 				orgUser= (orgUserOptional.isPresent() ? orgUserOptional.get() : null);
-				
+
 				Optional<OrgBean> orgOptional = org.findById(orgUser.getOrganizationId());
 				organisation= (orgOptional.isPresent() ? orgOptional.get() : null);
 			}
@@ -349,7 +381,7 @@ public class UserServiceImp implements UserService{
 			helpResponseBean.setOrgUser(orgUser);
 			helpResponseBean.setOrganisation(organisation);
 			helpResponseBean.setVolunteer(volunteer);
-			
+
 			if((helpItemStatus==null || helpItemStatus.trim().length() == 0 || helpItemStatus.equals(HelpMeContants.STATUS_OPEN)) && key.equalsIgnoreCase(HelpMeContants.STATUS_OPEN)) {
 				pending.add(helpResponseBean);
 			} else if((helpItemStatus==null || helpItemStatus.trim().length() == 0 || helpItemStatus.equals(HelpMeContants.STATUS_ACCEPTED)) && key.equalsIgnoreCase(HelpMeContants.STATUS_ACCEPTED)) {
@@ -383,13 +415,10 @@ public class UserServiceImp implements UserService{
 	@Override
 	public HelpListResponse userHelpList(int userId, String helpItemStatus) {
 		if(helpItemStatus != null && helpItemStatus.equals(HelpMeContants.STATUS_UN_ASSIGNED)) {
-			List<HelpItemQueueBean> queue = helpItemQueue.findByUserId(userId);
-			List<Integer> helpItems = new ArrayList<>();
-			for (HelpItemQueueBean helpItem : queue) {
-				helpItems.add(helpItem.getHelpItemId());
-			}
+			List<HelpBean> helpItems = getHelpItemsFromQueue(userId);
+
 			if(helpItems.size() > 0) {
-				return getHelpItemLists((List<HelpBean>)help.findAllById(helpItems), HelpMeContants.STATUS_OPEN);
+				return getHelpItemLists(helpItems, HelpMeContants.STATUS_OPEN);
 			}
 		} else {
 			Optional<UserBean> userBean = user.findById(userId);
@@ -397,7 +426,14 @@ public class UserServiceImp implements UserService{
 				if(userBean.get().getUserType().equals(HelpMeContants.USER_TYPE_HELPFINDER)) {
 					return getHelpItemLists(help.findByUserId(userId), helpItemStatus);
 				} else if(userBean.get().getUserType().equals(HelpMeContants.USER_TYPE_SERVICE_PROVIDER)) { 
-					return getHelpItemLists(help.findByAssignedUserId(userId), helpItemStatus);
+					List<HelpBean> helpItems = help.findByAssignedUserId(userId);
+					if(helpItemStatus == null || helpItemStatus.trim().length() == 0) {
+						List<HelpBean> helpItemsQueue = getHelpItemsFromQueue(userId);
+						if(helpItemsQueue.size() > 0) {
+							helpItems.addAll(helpItemsQueue);
+						}
+					}
+					return getHelpItemLists(helpItems, helpItemStatus);
 				} else if(userBean.get().getUserType().equals(HelpMeContants.USER_TYPE_VOLUNTEER)) {
 					return getHelpItemLists(help.findByVolunteerUserId(userId), helpItemStatus);
 				}
@@ -405,6 +441,21 @@ public class UserServiceImp implements UserService{
 		}
 		return  new HelpListResponse();
 	}
+
+	private List<HelpBean> getHelpItemsFromQueue(int userId) {
+		List<Integer> helpItems = new ArrayList<Integer>();
+		List<HelpItemQueueBean> queue = helpItemQueue.findByUserId(userId);
+		for (HelpItemQueueBean helpItem : queue) {
+			helpItems.add(helpItem.getHelpItemId());
+		}
+
+		if(helpItems.size() > 0) {
+			return (List<HelpBean>)help.findAllById(helpItems);
+		}
+
+		return new ArrayList<HelpBean>();
+	}
+
 
 	@Override
 	public LoginBean generateAndSaveOTP(LoginBean loginBean) throws Exception {
@@ -468,7 +519,7 @@ public class UserServiceImp implements UserService{
 
 		return null;
 	}
-	
+
 	@Override
 	public List<UserBean> listServiceProvider(int cityId, int categoryId) {
 		Optional<List<UserBean>> serviceProviders = user.getServiceProviders(cityId, categoryId, HelpMeContants.USER_TYPE_SERVICE_PROVIDER);
