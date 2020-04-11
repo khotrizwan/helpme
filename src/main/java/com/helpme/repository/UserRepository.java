@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import com.helpme.config.HelpMeContants;
 import com.helpme.model.UserBean;
 
 @Repository
@@ -19,4 +20,6 @@ public interface UserRepository extends CrudRepository<UserBean, Integer> {
 
 	Optional<List<UserBean>> findByOrganizationId(int organizationId);
 	
+	@Query(value = "SELECT u.* FROM user u WHERE u.city_id = :cityId and u.user_type = '" + HelpMeContants.USER_TYPE_VOLUNTEER +"' and u.is_active='Y' and u.is_admin='N' ", nativeQuery = true)
+	Optional<List<UserBean>> getVolunteerUsers(int cityId);
 }

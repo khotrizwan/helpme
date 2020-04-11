@@ -25,4 +25,8 @@ public interface UserService {
 	public HelpBean updateHelp(int helpItemId, int userId, String itemStatus);
 	public List<UserBean> listServiceProvider(int cityId, int categoryId);
 	public UserBean saveVolunteer(UserBean userBean);
+	public List<HelpBean> getOpenHelpItems();
+	public Map<Integer, List<HelpBean>> getCityHelpMap(List<HelpBean> helpList);
+	public List<UserBean> getVolunteerUsers(int cityId);
+	public int getNextVolunteerId(List<UserBean> volunteers);
 }

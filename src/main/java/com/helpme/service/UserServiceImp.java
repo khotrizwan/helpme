@@ -236,17 +236,17 @@ public class UserServiceImp implements UserService{
 			}
 			logger.debug(" Size check start: " + helpBean);
 			// Checking size
-			if(spsToSeekHelp.size() == 1)
-			{
-				logger.debug(" Only One Org: " + helpBean);
-				UserBean user = getUserByOrganisation(spsToSeekHelp.get(0));
-				if(user != null) {
-					helpBean.setAssignedUserId(user.getId());
-					helpBean.setHelpItemStatus(HelpMeContants.STATUS_ACCEPTED);
-					helpBean = help.save(helpBean);
-				}
-				return helpBean;
-			}
+//			if(spsToSeekHelp.size() == 1)
+//			{
+//				logger.debug(" Only One Org: " + helpBean);
+//				UserBean user = getUserByOrganisation(spsToSeekHelp.get(0));
+//				if(user != null) {
+//					helpBean.setAssignedUserId(user.getId());
+//					helpBean.setHelpItemStatus(HelpMeContants.STATUS_ACCEPTED);
+//					helpBean = help.save(helpBean);
+//				}
+//				return helpBean;
+//			}
 			
 			
 
@@ -527,5 +527,85 @@ public class UserServiceImp implements UserService{
 			return serviceProviders.get();
 		}		
 		return new ArrayList<UserBean>();
+	}
+	
+	public List<HelpBean> getOpenHelpItems() {
+		Optional<List<HelpBean>> openHelpItems = help.getOpenHelpItems();
+		
+		if(openHelpItems.isPresent()) {
+			return openHelpItems.get();
+		}
+		return new ArrayList<HelpBean>();
+	}
+	
+	private Map<Integer, Integer> getHelpUserCityMap(List<HelpBean> helpList) {
+		Map<Integer, Integer> userCityMap = new HashMap<Integer, Integer>();
+		
+		List<UserBean> helpUsers = new ArrayList<UserBean>();
+		List<Integer> helpUserIdList = new ArrayList<Integer>();
+		
+		for (HelpBean helpBean : helpList) {
+			helpUserIdList.add(helpBean.getUserId());
+		}
+		
+		if(helpUserIdList.size() > 0) {
+			helpUsers =  (List<UserBean>)user.findAllById(helpUserIdList);
+		}
+		
+		for (UserBean userBean : helpUsers) {
+			userCityMap.put(userBean.getId(), userBean.getCityId());
+		}
+		return userCityMap;
+	}
+ 
+	public Map<Integer, List<HelpBean>> getCityHelpMap(List<HelpBean> helpList) {
+		Map<Integer, List<HelpBean>> cityHelpMap = new HashMap<Integer, List<HelpBean>>();
+		Map<Integer, Integer> userCityMap = getHelpUserCityMap(helpList);
+		
+		for (HelpBean helpBean : helpList) {
+			List<HelpBean> cityHelpList = new ArrayList<HelpBean>();
+			logger.debug("1 helpBean.getUserId(): " + helpBean.getUserId());
+			logger.debug("userCityMap: " + userCityMap.size());
+			logger.debug("2 helpBean.getUserId(): " + helpBean.getUserId());
+			int cityId = userCityMap.get(helpBean.getUserId());
+			if(cityHelpMap.containsKey(cityId)) {
+				cityHelpList = cityHelpMap.get(cityId);
+			}
+			cityHelpList.add(helpBean);
+			cityHelpMap.put(cityId, cityHelpList);
+		}
+		return cityHelpMap;
+	}
+	
+	@Override
+	public List<UserBean> getVolunteerUsers(int cityId) {
+		Optional<List<UserBean>> volunteerUsers = user.getVolunteerUsers(cityId);
+		if(volunteerUsers.isPresent()) {
+			return volunteerUsers.get();
+		}		
+		return new ArrayList<UserBean>();
+	}
+	
+	public int getNextVolunteerId(List<UserBean> volunteers) {
+		int nextVolunteerId = 0;
+		Map<Integer, Integer> userHelpCountMap = new HashMap<Integer, Integer>();
+		
+		for (UserBean userBean : volunteers) {
+			userHelpCountMap.put(userBean.getId(), help.getVolunteerAssignedHelpCount(userBean.getId()));
+		}		
+		
+		int minHelpCount = userHelpCountMap.get(volunteers.get(0).getId());
+    	nextVolunteerId = volunteers.get(0).getId();
+    	
+    	for(int i=1;i<userHelpCountMap.size();i++){
+		    if(userHelpCountMap.get(volunteers.get(i).getId()) < minHelpCount){
+		    	minHelpCount = userHelpCountMap.get(volunteers.get(i).getId());
+		    	nextVolunteerId = volunteers.get(i).getId();
+			}
+		}
+		
+		logger.debug("Volunteer Id with min help items: " + nextVolunteerId + " | No of help items: " + minHelpCount); 
+		
+		return nextVolunteerId;
 	}
 }
