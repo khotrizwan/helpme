@@ -36,9 +36,12 @@ public class UserBean {
 	private int organizationId;
 	private String isActive;
 	private Date createDate;
-
+	private String deviceToken;
+	private String language;
+	
 	@Transient
 	private String otp;
+
 	
 	public UserBean() {
 		// TODO Auto-generated constructor stub
@@ -173,13 +176,31 @@ public class UserBean {
 		this.otp = otp;
 	}
 
+	public String getDeviceToken() {
+		return deviceToken;
+	}
+
+	public void setDeviceToken(String deviceToken) {
+		this.deviceToken = deviceToken;
+	}
+
+	public String getLanguage() {
+		return language;
+	}
+
+	public void setLanguage(String language) {
+		this.language = language;
+	}
+
 	@Override
 	public String toString() {
 		return "UserBean [id=" + id + ", mobileno=" + mobileno + ", firstName=" + firstName + ", middleName="
 				+ middleName + ", lastName=" + lastName + ", emailAddress=" + emailAddress + ", latitude=" + latitude
 				+ ", longitude=" + longitude + ", address=" + address + ", cityId=" + cityId + ", isAdmin=" + isAdmin
 				+ ", userType=" + userType + ", organizationId=" + organizationId + ", isActive=" + isActive
-				+ ", createDate=" + createDate + ", otp=" + otp + "]";
+				+ ", createDate=" + createDate + ", deviceToken=" + deviceToken + ", language=" + language + ", otp="
+				+ otp + "]";
 	}
+
 }
 

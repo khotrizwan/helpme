@@ -37,6 +37,13 @@ public class OrgBean {
 	@Transient
 	private String catIds;
 	
+	@Transient
+	private String deviceToken;
+	
+	@Transient
+	private String language;
+	
+	
 	public int getId() {
 		return id;
 	}
@@ -159,6 +166,20 @@ public class OrgBean {
 	public void setCatIds(String catIds) {
 		this.catIds = catIds;
 	}
+	
+	
+	public String getDeviceToken() {
+		return deviceToken;
+	}
+	public void setDeviceToken(String deviceToken) {
+		this.deviceToken = deviceToken;
+	}
+	public String getLanguage() {
+		return language;
+	}
+	public void setLanguage(String language) {
+		this.language = language;
+	}
 	@Override
 	public String toString() {
 		return "OrgBean [id=" + id + ", orgName=" + orgName + ", orgDesc=" + orgDesc + ", mobileno=" + mobileno
@@ -166,10 +187,8 @@ public class OrgBean {
 				+ ", emailAddress=" + emailAddress + ", latitude=" + latitude + ", longitude=" + longitude
 				+ ", address=" + address + ", cityId=" + cityId + ", orgType=" + orgType + ", isIndividual="
 				+ isIndividual + ", canAccept=" + canAccept + ", isActive=" + isActive + ", createDate=" + createDate
-				+ ", otp=" + otp + ", catIds=" + catIds + "]";
+				+ ", otp=" + otp + ", catIds=" + catIds + ", deviceToken=" + deviceToken + ", language=" + language
+				+ "]";
 	}
-	
-	
-	
 	
 }
