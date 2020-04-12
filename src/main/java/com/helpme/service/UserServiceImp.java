@@ -34,6 +34,7 @@ import com.helpme.repository.OrgHelpCategoryRepo;
 import com.helpme.repository.OrgRepository;
 import com.helpme.repository.UserRepository;
 import com.helpme.util.HelpMeUtil;
+import com.helpme.util.NotificationUtil;
 
 @Service
 public class UserServiceImp implements UserService{
@@ -69,8 +70,14 @@ public class UserServiceImp implements UserService{
 		Optional<LoginBean> bdDetails = login.findById(loginBean.getMobileno());
 		if(bdDetails.isPresent() && bdDetails.get().getOtp().equals(loginBean.getOtp())) {
 			Optional<UserBean> userOptional = user.findByMobileno(loginBean.getMobileno());
-			if(userOptional.isPresent())
-				return userOptional.get();
+			if(userOptional.isPresent()) {
+				UserBean userBean =  userOptional.get();
+				userBean.setDeviceToken(loginBean.getDeviceToken());
+				userBean.setLatitude(loginBean.getLatitude());
+				userBean.setLongitude(loginBean.getLongitude());
+				userBean = user.save(userBean);
+				return userBean;
+			}
 		}
 
 		return null;
@@ -133,6 +140,8 @@ public class UserServiceImp implements UserService{
 			userBean.setAddress(orgBean.getAddress());
 			userBean.setCityId(orgBean.getCityId());
 			userBean.setOrganizationId(orgBean.getId());
+			userBean.setDeviceToken(orgBean.getDeviceToken());
+			userBean.setLanguage(orgBean.getLanguage());
 			logger.debug("In  saveServiceProvider Org ID: " + orgBean.getId());
 			saveServiceProviderUser(userBean);	
 			logger.debug("In  saveServiceProvider User ID: "+ userBean.getId());
@@ -244,11 +253,13 @@ public class UserServiceImp implements UserService{
 //					helpBean.setAssignedUserId(user.getId());
 //					helpBean.setHelpItemStatus(HelpMeContants.STATUS_ACCEPTED);
 //					helpBean = help.save(helpBean);
+//
+//					sendStatusNotificationToHelpFinder(helpBean);
 //				}
 //				return helpBean;
 //			}
-			
-			
+
+
 
 			if (spsToSeekHelp.size() < 10)
 			{
@@ -290,6 +301,8 @@ public class UserServiceImp implements UserService{
 		return helpBean;
 	}
 
+
+
 	private UserBean getUserByOrganisation(OrgBean orgBean) {
 		Optional<List<UserBean>> users = user.findByOrganizationId(orgBean.getId());
 		if(users.isPresent()) {
@@ -311,6 +324,8 @@ public class UserServiceImp implements UserService{
 	private void insertIntoQueue(HelpBean helpBean, List<OrgBean> serviceProviders)
 	{
 		logger.debug(" insertIntoQueue start: " + helpBean);
+
+		List<String> deviceTokens = new ArrayList<String>();
 		for(OrgBean serviceProvider:serviceProviders)
 		{
 			UserBean user = getUserByOrganisation(serviceProvider);
@@ -319,7 +334,14 @@ public class UserServiceImp implements UserService{
 				bean.setHelpItemId(helpBean.getId());
 				bean.setUserId(user.getId());
 				helpItemQueue.save(bean);
+				if(user.getDeviceToken() != null && !user.getDeviceToken().trim().equals("")) {
+					deviceTokens.add(user.getDeviceToken().trim());
+				}
 			}
+
+		}
+		if(deviceTokens.size() > 0) {
+			NotificationUtil.sendNotification(env.getProperty(HelpMeContants.QUEUE_NOTIFICATION_TITLE), env.getProperty(HelpMeContants.QUEUE_NOTIFICATION_TEXT), env.getProperty(HelpMeContants.QUEUE_NOTIFICATION_TYPE), env.getProperty(HelpMeContants.QUEUE_NOTIFICATION_URL), deviceTokens);
 		}
 		logger.debug(" insertIntoQueue End: " + helpBean);
 	}
@@ -512,6 +534,7 @@ public class UserServiceImp implements UserService{
 				historyBean.setCreateDate(new Date());
 				historyBean.setCreatedBy(userId);
 				historyBean = helpHistory.save(historyBean);
+				sendStatusNotificationToHelpFinder(dbHelpBean);
 				return dbHelpBean;
 			}
 		}
@@ -519,6 +542,67 @@ public class UserServiceImp implements UserService{
 
 		return null;
 	}
+
+	private void sendStatusNotificationToHelpFinder(HelpBean helpBean) {
+		Optional<UserBean> helpFinderOptional = user.findById(helpBean.getUserId());
+		Optional<UserBean> serviceProvierOptional = user.findById(helpBean.getAssignedUserId());
+		
+		UserBean helpFinder = (helpFinderOptional.isPresent() ? helpFinderOptional.get() : null);
+		UserBean serviceProvider = (serviceProvierOptional.isPresent() ? serviceProvierOptional.get() : null);
+		if(helpFinder != null && serviceProvider != null) {
+			List<String> deviceTokens = new ArrayList<String>();
+			String title = null;
+			String text = null;
+			String type = null;
+			String url = null;
+			
+			if(helpBean.getHelpItemStatus().equalsIgnoreCase(HelpMeContants.STATUS_ACCEPTED) && helpFinder.getDeviceToken() != null && !helpFinder.getDeviceToken().trim().equals("")) {
+				deviceTokens.add(helpFinder.getDeviceToken().trim());
+				title = env.getProperty(HelpMeContants.ACCEPTED_NOTIFICATION_TITLE);
+				text = env.getProperty(HelpMeContants.ACCEPTED_NOTIFICATION_TEXT);
+				type = env.getProperty(HelpMeContants.ACCEPTED_NOTIFICATION_TYPE);
+				url = env.getProperty(HelpMeContants.ACCEPTED_NOTIFICATION_URL);
+			}
+			if(helpBean.getHelpItemStatus().equalsIgnoreCase(HelpMeContants.STATUS_REJECTED) && serviceProvider.getDeviceToken() != null && !serviceProvider.getDeviceToken().trim().equals("")) {
+				deviceTokens.add(serviceProvider.getDeviceToken().trim());
+				title = env.getProperty(HelpMeContants.REJECTED_NOTIFICATION_TITLE);
+				text = env.getProperty(HelpMeContants.REJECTED_NOTIFICATION_TEXT);
+				type = env.getProperty(HelpMeContants.REJECTED_NOTIFICATION_TYPE);
+				url = env.getProperty(HelpMeContants.REJECTED_NOTIFICATION_URL);
+			}
+			if(helpBean.getHelpItemStatus().equalsIgnoreCase(HelpMeContants.STATUS_RESOLVED) && helpFinder.getDeviceToken() != null && !helpFinder.getDeviceToken().trim().equals("")) {
+				deviceTokens.add(helpFinder.getDeviceToken().trim());
+				title = env.getProperty(HelpMeContants.RESOLVED_NOTIFICATION_TITLE);
+				text = env.getProperty(HelpMeContants.RESOLVED_NOTIFICATION_TEXT);
+				type = env.getProperty(HelpMeContants.RESOLVED_NOTIFICATION_TYPE);
+				url = env.getProperty(HelpMeContants.RESOLVED_NOTIFICATION_URL);
+			}
+			if(helpBean.getHelpItemStatus().equalsIgnoreCase(HelpMeContants.STATUS_UN_RESOLVED) && serviceProvider.getDeviceToken() != null && !serviceProvider.getDeviceToken().trim().equals("")) {
+				deviceTokens.add(serviceProvider.getDeviceToken().trim());
+				title = env.getProperty(HelpMeContants.UN_RESOLVED_NOTIFICATION_TITLE);
+				text = env.getProperty(HelpMeContants.UN_RESOLVED_NOTIFICATION_TEXT);
+				type = env.getProperty(HelpMeContants.UN_RESOLVED_NOTIFICATION_TYPE);
+				url = env.getProperty(HelpMeContants.UN_RESOLVED_NOTIFICATION_URL);
+			}
+			if(helpBean.getHelpItemStatus().equalsIgnoreCase(HelpMeContants.STATUS_CLOSED) && serviceProvider.getDeviceToken() != null && !serviceProvider.getDeviceToken().trim().equals("")) {
+				deviceTokens.add(serviceProvider.getDeviceToken().trim());
+				title = env.getProperty(HelpMeContants.CLOSED_NOTIFICATION_TITLE);
+				text = env.getProperty(HelpMeContants.CLOSED_NOTIFICATION_TEXT);
+				type = env.getProperty(HelpMeContants.CLOSED_NOTIFICATION_TYPE);
+				url = env.getProperty(HelpMeContants.CLOSED_NOTIFICATION_URL);
+			}
+			if(title != null && text != null && !text.trim().equals("") && deviceTokens.size() > 0) {
+				text = text.replaceAll("<HelpFinderName>", (helpFinder.getFirstName() + " " + helpFinder.getLastName()).trim());
+				text = text.replaceAll("<HFMobileno>", helpFinder.getMobileno());
+				
+				text = text.replaceAll("<ServiceProviderName>", (serviceProvider.getFirstName() + " " + serviceProvider.getLastName()).trim());
+				text = text.replaceAll("<SPMobileno>", serviceProvider.getMobileno());
+				
+				NotificationUtil.sendNotification(title.trim(), text.trim(), type.trim(), url.trim(), deviceTokens);
+			}
+		}
+	}
+
 
 	@Override
 	public List<UserBean> listServiceProvider(int cityId, int categoryId) {

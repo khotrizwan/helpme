@@ -3,6 +3,7 @@ package com.helpme.model;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
 @Entity(name="login")
@@ -11,6 +12,12 @@ public class LoginBean {
 	@Size(min = 10, max = 10)
 	private String mobileno;
 	private String otp;
+	@Transient
+	private String deviceToken;
+	@Transient
+	private String latitude;
+	@Transient
+	private String longitude;
 	
 	public LoginBean() {
 		// TODO Auto-generated constructor stub
@@ -38,11 +45,35 @@ public class LoginBean {
 		this.otp = otp;
 	}
 
+	public String getDeviceToken() {
+		return deviceToken;
+	}
+
+	public void setDeviceToken(String deviceToken) {
+		this.deviceToken = deviceToken;
+	}
+
+	public String getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(String latitude) {
+		this.latitude = latitude;
+	}
+
+	public String getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(String longitude) {
+		this.longitude = longitude;
+	}
+
 	@Override
 	public String toString() {
-		return "LoginBean [mobileno=" + mobileno + ", otp=" + otp + "]";
+		return "LoginBean [mobileno=" + mobileno + ", otp=" + otp + ", deviceToken=" + deviceToken + ", latitude="
+				+ latitude + ", longitude=" + longitude + "]";
 	}
-	
-	
 
+	
 }
