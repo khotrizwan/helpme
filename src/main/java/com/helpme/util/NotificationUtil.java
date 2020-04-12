@@ -36,6 +36,8 @@ public class NotificationUtil {
 			data.put("url", url);
 			notification.put("body", text); //"Visitor scheduled for your society"
 			notification.put("title", title); //"Schedule Notification"
+			data.put("body", text); //"Visitor scheduled for your society"
+			data.put("title", title); //"Schedule Notification"
 			json.put("registration_ids",arr); //json.put("to",toStr);
 			json.put("data", data);
 			json.put("notification", notification);
@@ -58,7 +60,7 @@ public class NotificationUtil {
 	
 	public static void main(String[] args) {
 		List<String> deviceTokens = new ArrayList<String>();
-		deviceTokens.add("eCv8RBQzQh-ETH-EwIFTOr:APA91bE9dN6PWlJVZhgN7_cjDMrPr1svSWFiyN5dnMHaNBCOIlIh_1FVXdJpXbPMU74QrKZXoG_1sItIGqMntEqMWFQF1LV6Z-HixOsT1p-yYkmk1q_68I2tjbJ4E-RBb9Y10s9QUe-H");
+		deviceTokens.add("fEcok9MiSpCwU-WvME5ZJa:APA91bF5eAYs3lkoxIdznJBB53Jg1vBLlIcCU8fyA55TlefNE70zVHRy4YSvuyTWgZLdTtbOQl3EFncsNEuxc3nUnibeQBQuo6x0QsqH68aDi4hLUD8DT-5CzOzUjiM2cq0huWOz_Qo9");
 		sendNotification("Title", "Sample Notification", "ServiceProvider", "https://app.helpmeplease.in/myrequest", deviceTokens);
 	}
 }
